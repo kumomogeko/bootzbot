@@ -1,5 +1,6 @@
 package bootz.gaming.bootzbot.domain.teams;
 
+import bootz.gaming.bootzbot.domain.sharedKernel.Executor;
 import bootz.gaming.bootzbot.domain.teams.teamlinks.Teamlink;
 import bootz.gaming.bootzbot.util.AggregateRoot;
 
@@ -13,16 +14,16 @@ public class Team {
     private final List<Teammitglied> members;
 
     private final Map<String, Teamlink> links;
-    private Optional<Teamlink> customOpgg;
+    private Teamlink customOpgg;
 
-    public Team(List<Teammitglied> members, Map<String, Teamlink> links, Optional<Teamlink> customOpgg) {
+    public Team(List<Teammitglied> members, Map<String, Teamlink> links, Teamlink customOpgg) {
         this.members = members;
         this.links = links;
         this.customOpgg = customOpgg;
     }
 
     public String getOpGG() {
-        return customOpgg.map(Teamlink::getLink).orElse(this.generateOpGG());
+        return Optional.ofNullable(customOpgg).map(Teamlink::getLink).orElse(this.generateOpGG());
     }
 
     private String generateOpGG() {
@@ -31,13 +32,20 @@ public class Team {
     }
 
     public void addTeamLink(AddTeamLinkCommand command) {
-        if (!this.members.contains(command.runner())) {
+        if (notAllowedToExecuteTeamAction(command.runner())){
             throw new RuntimeException("Kein Teammitglied!");
         }
         if (command.isOpGG()) {
-            this.customOpgg = Optional.of(command.link());
+            this.customOpgg = command.link();
         }
         links.put(command.linkId(), command.link());
+    }
+
+    private boolean notAllowedToExecuteTeamAction(Executor executor) {
+        return !executor.isAdmin() &&
+                this.members.stream()
+                        .map(Teammitglied::getDiscordAccount)
+                        .noneMatch(snowflake -> executor.getDiscordAccount().equals(snowflake));
     }
 
     public Map<String, Teamlink> getLinks() {
