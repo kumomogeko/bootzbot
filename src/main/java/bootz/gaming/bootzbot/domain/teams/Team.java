@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 
 @AggregateRoot
 public class Team {
-    private final List<Teammitglied> members;
 
+    private final List<Teammitglied> members;
     private final Map<String, Teamlink> links;
     private Teamlink customOpgg;
 
@@ -41,6 +41,31 @@ public class Team {
         links.put(command.linkId(), command.link());
     }
 
+    public void addTeammitglied(AddTeammitgliedCommand command){
+        if(notAllowedToExecuteTeamAction(command.runner())){
+            throw new RuntimeException("Keine Berechtigung!");
+        }
+        if(isMember(command.teammitglied())){
+            throw  new RuntimeException("Ist schon Teammitglied!");
+        }
+        this.members.add(command.teammitglied());
+    }
+
+    public void removeTeammitglied(RemoveTeammitgliedCommand command){
+        if(notAllowedToExecuteTeamAction(command.runner())){
+            throw new RuntimeException("Keine Berechtigung!");
+        }
+        if(!isMember(command.teammitglied())){
+            throw new RuntimeException("Ist kein Teammitglied!");
+        }
+        this.members.removeIf(teammitglied -> command.teammitglied().isEqual(teammitglied));
+    }
+
+    private boolean isMember(Teammitglied teammitglied) {
+        return this.members.stream()
+                .anyMatch(teammitglied1 -> teammitglied1.isEqual(teammitglied));
+    }
+
     private boolean notAllowedToExecuteTeamAction(Executor executor) {
         return !executor.isAdmin() &&
                 this.members.stream()
@@ -51,4 +76,9 @@ public class Team {
     public Map<String, Teamlink> getLinks() {
         return links;
     }
+
+    public List<Teammitglied> getMembers() {
+        return members;
+    }
+
 }

@@ -8,9 +8,59 @@ import spock.lang.Specification
 class TeamTest extends Specification {
     def discordAccount = Snowflake.of(Snowflake.DISCORD_EPOCH)
 
-    def "Can add a Link"() {
-        def teammitglied = new Teammitglied(discordAccount, Set.of(), "B")
+    def "Can remove Teammitglied"() {
         given:
+        def teammitglied = new Teammitglied(discordAccount, Set.of(), "C")
+        def admin = new Admin(Snowflake.of(2l))
+        def team = new Team([new Teammitglied(discordAccount, Set.of(), "B")],[:], null)
+
+        when:
+        team.removeTeammitglied(new RemoveTeammitgliedCommand(admin, teammitglied))
+
+        then:
+        team.getMembers().isEmpty()
+    }
+
+    def "Wont remove non-Teammitglied "() {
+        given:
+        def teammitglied = new Teammitglied(discordAccount, Set.of(), "C")
+        def admin = new Admin(Snowflake.of(2l))
+        def team = new Team([],[:], null)
+
+        when:
+        team.removeTeammitglied(new RemoveTeammitgliedCommand(admin, teammitglied))
+
+        then:
+        thrown(RuntimeException)
+    }
+
+    def "Can add Teammitglied"() {
+        given:
+        def teammitglied = new Teammitglied(discordAccount, Set.of(), "B")
+        def admin = new Admin(Snowflake.of(2l))
+        def team = new Team([],[:], null)
+
+        when:
+        team.addTeammitglied(new AddTeammitgliedCommand(admin,teammitglied))
+        then:
+        team.getMembers().contains(teammitglied)
+    }
+
+    def "Adding a Teammitglied multiple times is prevented"() {
+        given:
+        def teammitglied = new Teammitglied(discordAccount, Set.of(), "C")
+        def admin = new Admin(Snowflake.of(2l))
+        def team = new Team([teammitglied],[:], null)
+
+        when:
+        team.addTeammitglied(new AddTeammitgliedCommand(admin,teammitglied))
+        then:
+        thrown(RuntimeException)
+    }
+
+    def "Can add a Link"() {
+        given:
+        def teammitglied = new Teammitglied(discordAccount, Set.of(), "B")
         def team = new Team([new Teammitglied(discordAccount, Set.of(), "A"), teammitglied, new Teammitglied(discordAccount, Set.of(), "C")], [:], null)
         def linkId = "asdf"
         def teamlink = new Teamlink("Das ist ein Link", "https://bootz-gaming.com/bootz-gaming-teams/")
@@ -24,8 +74,8 @@ class TeamTest extends Specification {
     }
 
     def "Can use a link as custom OPGG"() {
-        def admin = new Admin(Snowflake.of(2l))
         given:
+        def admin = new Admin(Snowflake.of(2l))
         def team = new Team([new Teammitglied(discordAccount, Set.of(), "A"), new Teammitglied(discordAccount, Set.of(), "C")], [:],new Teamlink("Bootz invite Link", "https://discord.gg/aYumqmdP"))
         def linkId = "asdf"
         def teamlink = new Teamlink("Das ist ein Link", "https://bootz-gaming.com/bootz-gaming-teams/")
@@ -38,8 +88,8 @@ class TeamTest extends Specification {
     }
 
     def "Rejects Links from a non member"() {
-        def teammitglied = new Teammitglied(Snowflake.of(1l), Set.of(), "B")
         given:
+        def teammitglied = new Teammitglied(Snowflake.of(1l), Set.of(), "B")
         def team = new Team([new Teammitglied(discordAccount, Set.of(), "A"), new Teammitglied(discordAccount, Set.of(), "C")], [:], null)
         def linkId = "asdf"
         def teamlink = new Teamlink("Das ist ein Link", "https://bootz-gaming.com/bootz-gaming-teams/")
