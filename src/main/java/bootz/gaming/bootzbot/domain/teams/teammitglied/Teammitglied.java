@@ -1,4 +1,4 @@
-package bootz.gaming.bootzbot.domain.teams;
+package bootz.gaming.bootzbot.domain.teams.teammitglied;
 
 import bootz.gaming.bootzbot.domain.sharedKernel.Executor;
 import bootz.gaming.bootzbot.util.Entity;
@@ -40,5 +40,9 @@ public class Teammitglied implements Executor {
 
     public boolean isEqual(Teammitglied teammitglied){
        return this.getDiscordAccount().equals(teammitglied.getDiscordAccount());
+    }
+
+    public boolean isCaptain(){
+        return this.rollen.contains(Rolle.CAPTAIN);
     }
 }
