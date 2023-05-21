@@ -2,10 +2,6 @@ package bootz.gaming.bootzbot.domain.teams.teamlinks;
 
 import bootz.gaming.bootzbot.util.ValueObject;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 @ValueObject

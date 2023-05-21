@@ -1,9 +1,9 @@
-package bootz.gaming.bootzbot.application.commands.admin;
+package bootz.gaming.bootzbot.application.commands;
 
 import bootz.gaming.bootzbot.domain.sharedKernel.ExecutorFactory;
 import bootz.gaming.bootzbot.domain.sharedKernel.RegistrableCommand;
-import bootz.gaming.bootzbot.domain.teams.AddTeamCommand;
 import bootz.gaming.bootzbot.domain.teams.TeamId;
+import bootz.gaming.bootzbot.domain.teams.TeamReadCommand;
 import bootz.gaming.bootzbot.domain.teams.TeamService;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
 import discord4j.core.object.command.ApplicationCommandInteractionOption;
@@ -17,12 +17,12 @@ import reactor.core.publisher.Mono;
 import java.util.function.Function;
 
 @Component
-public class DiscordAddTeamCommand implements RegistrableCommand {
+public class DCGetOpGGCommand implements RegistrableCommand {
 
     private final TeamService teamService;
     private final ExecutorFactory executorFactory;
 
-    public DiscordAddTeamCommand(TeamService teamService, ExecutorFactory executorFactory) {
+    public DCGetOpGGCommand(TeamService teamService, ExecutorFactory executorFactory) {
         this.teamService = teamService;
         this.executorFactory = executorFactory;
     }
@@ -30,8 +30,8 @@ public class DiscordAddTeamCommand implements RegistrableCommand {
     @Override
     public ApplicationCommandRequest getDiscordCommandRequest() {
         return ApplicationCommandRequest.builder()
-                .name("addteam")
-                .description("Fügt ein Team hinzu")
+                .name("ggteam")
+                .description("Ruft das OP.GG eines Teams ab")
                 .addOption(ApplicationCommandOptionData.builder()
                         .type(ApplicationCommandOption.Type.STRING.getValue())
                         .description("Name des Teams")
@@ -46,14 +46,15 @@ public class DiscordAddTeamCommand implements RegistrableCommand {
         return event -> {
             var guildId = event.getInteraction().getGuildId().orElseThrow();
             var member = event.getInteraction().getMember().orElseThrow();
-            return this.executorFactory.executorFromMember(member).flatMap(executor -> {
-                var teamName = event.getOption("name")
-                        .flatMap(ApplicationCommandInteractionOption::getValue)
-                        .map(ApplicationCommandInteractionOptionValue::asString)
-                        .orElseThrow();
-                var command = new AddTeamCommand(executor, new TeamId(guildId.asLong(), teamName));
-                return teamService.addTeam(command).then(event.reply(String.format("Team hinzugefügt: %s", teamName)));
-            });
+            return executorFactory.executorFromMember(member)
+                    .flatMap(executor -> {
+                        var teamName = event.getOption("name")
+                                .flatMap(ApplicationCommandInteractionOption::getValue)
+                                .map(ApplicationCommandInteractionOptionValue::asString)
+                                .orElseThrow();
+                        return teamService.getOpgg(new TeamReadCommand(executor, new TeamId(guildId.asLong(), teamName)));
+                    })
+                    .flatMap(event::reply);
         };
     }
 }

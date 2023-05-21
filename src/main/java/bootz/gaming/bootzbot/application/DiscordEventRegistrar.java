@@ -3,7 +3,6 @@ package bootz.gaming.bootzbot.application;
 import bootz.gaming.bootzbot.domain.sharedKernel.RegistrableCommand;
 import bootz.gaming.bootzbot.infra.inbound.DiscordBotAccessProvision;
 import discord4j.core.GatewayDiscordClient;
-import discord4j.core.event.domain.interaction.ApplicationCommandInteractionEvent;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
 import discord4j.discordjson.json.ApplicationCommandRequest;
 import discord4j.rest.RestClient;
@@ -54,7 +53,8 @@ public class DiscordEventRegistrar {
                 .on(ChatInputInteractionEvent.class, event ->
                         this.commandList.get(event.getCommandName())
                                 .getCommandHandler()
-                                .apply(event))
+                                .apply(event)
+                                .onErrorResume(throwable -> event.reply(String.format("Fehler: %s", throwable.getMessage()))))
                 .subscribe();
     }
 }

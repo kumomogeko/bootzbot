@@ -80,6 +80,7 @@ public class TeamService {
     private <X extends Command> Mono<Void> executeTeamActionFromRepoAndSave(BiConsumer<Team, X> consumer, X command) {
         return this.repository
                 .getTeamByTeamId(command.teamId())
+                .switchIfEmpty(Mono.error(new RuntimeException("Team nicht gefunden oder existiert nicht!")))
                 .map(team -> {
                     consumer.accept(team, command);
                     return team;
@@ -89,6 +90,7 @@ public class TeamService {
     private <X extends Command, Y> Mono<Y> executeTeamReadActionFromRepo(Function<Team, Y> consumer, X command) {
         return this.repository
                 .getTeamByTeamId(command.teamId())
+                .switchIfEmpty(Mono.error(new RuntimeException("Team nicht gefunden oder existiert nicht!")))
                 .map(consumer);
     }
 
