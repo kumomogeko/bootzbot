@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
+import java.util.List;
 
 @Component
 @Profile("!redis")
@@ -34,5 +35,10 @@ public class TerribleTeamRepoImpl implements TeamRepository {
     public Mono<Void> delete(TeamId teamId) {
         this.repo.remove(teamId);
         return Mono.empty().then();
+    }
+
+    @Override
+    public Mono<List<Team>> getTeams() {
+        return Mono.justOrEmpty(this.repo.values().stream().toList());
     }
 }

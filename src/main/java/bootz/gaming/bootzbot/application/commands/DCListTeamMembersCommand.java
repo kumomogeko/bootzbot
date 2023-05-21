@@ -36,7 +36,7 @@ public class DCListTeamMembersCommand extends AbstractRegistrableCommand{
     @Override
     public ApplicationCommandRequest getDiscordCommandRequest() {
         return ApplicationCommandRequest.builder()
-                .name("teamlist")
+                .name("listmembers")
                 .description("Listet die Mitglieder eines Teams auf")
                 .addOption(ApplicationCommandOptionData.builder()
                         .type(ApplicationCommandOption.Type.STRING.getValue())

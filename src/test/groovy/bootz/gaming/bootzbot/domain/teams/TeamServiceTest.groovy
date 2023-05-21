@@ -23,6 +23,6 @@ class TeamServiceTest extends Specification {
 
         then:
         1 * teamRepository.getTeamByTeamId(teamId) >> Mono.just(new Team(2l,"",[], ["link": teamlink],null))
-        result.contains(teamlink)
+        result.containsValue(teamlink)
     }
 }

@@ -139,4 +139,7 @@ public class Team {
         return customOpggTeamlinkRef;
     }
 
+    public List<Teammitglied> getCaptains() {
+        return this.members.stream().filter(Teammitglied::isCaptain).collect(Collectors.toList());
+    }
 }

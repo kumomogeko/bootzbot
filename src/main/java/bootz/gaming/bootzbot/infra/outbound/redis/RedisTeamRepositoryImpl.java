@@ -10,6 +10,8 @@ import org.springframework.data.redis.core.ReactiveRedisOperations;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @Component
 @Profile("redis")
 public class RedisTeamRepositoryImpl implements TeamRepository {
@@ -35,5 +37,14 @@ public class RedisTeamRepositoryImpl implements TeamRepository {
     @Override
     public Mono<Void> delete(TeamId teamId) {
         return redisOperations.opsForHash().remove(KEY,teamId.toString()).then();
+    }
+
+    @Override
+    public Mono<List<Team>> getTeams() {
+        return this.redisOperations.opsForHash().values(KEY)
+                .cast(TeamDBO.class)
+                .map(TeamDBO::getTeam)
+                .map(TeamDB::toTeam)
+                .collectList();
     }
 }

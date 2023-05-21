@@ -44,6 +44,10 @@ public class TeamService {
         return this.repository.delete(command.teamId());
     }
 
+    public Mono<List<Team>> getTeams(){
+        return this.repository.getTeams();
+    }
+
     public Mono<Void> addTeammitglied(AddTeammitgliedCommand command) {
         return this.executeTeamActionFromRepoAndSave(Team::addTeammitglied, command);
     }
