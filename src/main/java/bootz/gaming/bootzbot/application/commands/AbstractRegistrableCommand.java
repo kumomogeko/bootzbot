@@ -9,14 +9,14 @@ import java.util.Optional;
 import java.util.function.Function;
 
 public abstract class AbstractRegistrableCommand implements RegistrableCommand {
-    public <X> X getOption(ChatInputInteractionEvent event, String opName, Function<ApplicationCommandInteractionOptionValue,X> extractorFun) {
+    public <X> X getOption(ChatInputInteractionEvent event, String opName, Function<ApplicationCommandInteractionOptionValue, X> extractorFun) {
         return event.getOption(opName)
                 .flatMap(ApplicationCommandInteractionOption::getValue)
                 .map(extractorFun)
                 .orElseThrow();
     }
 
-    public <X> Optional<X> getNonRequiredOption(ChatInputInteractionEvent event, String opName, Function<ApplicationCommandInteractionOptionValue,X> extractorFun) {
+    public <X> Optional<X> getNonRequiredOption(ChatInputInteractionEvent event, String opName, Function<ApplicationCommandInteractionOptionValue, X> extractorFun) {
         return event.getOption(opName)
                 .flatMap(ApplicationCommandInteractionOption::getValue)
                 .map(extractorFun);

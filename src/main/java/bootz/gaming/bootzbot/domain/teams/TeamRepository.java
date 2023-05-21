@@ -7,6 +7,7 @@ import java.util.List;
 public interface TeamRepository {
     //Mono<Team> getTeamByGuildAndName(Long guildId, String name);
     Mono<Team> getTeamByTeamId(TeamId teamId);
+
     Mono<Void> save(Team team);
 
     Mono<Void> delete(TeamId teamId);

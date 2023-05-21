@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono;
 
 @Component
 public class ExecutorFactory {
-    public Mono<Executor> executorFromMember(Member member){
+    public Mono<Executor> executorFromMember(Member member) {
         return member.getBasePermissions().map(permissions -> permissions.asEnumSet().contains(Permission.ADMINISTRATOR))
                 .map(isAdmin -> {
                     var executor = isAdmin ? new Admin(member.getId()) : new User(member.getId());

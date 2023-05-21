@@ -2,7 +2,6 @@ package bootz.gaming.bootzbot.domain.teams.teammitglied;
 
 import bootz.gaming.bootzbot.domain.sharedKernel.Executor;
 import bootz.gaming.bootzbot.util.Entity;
-import discord4j.common.util.Snowflake;
 import reactor.util.annotation.NonNull;
 
 import java.util.Set;
@@ -17,7 +16,7 @@ public class Teammitglied implements Executor {
     private String leagueName;
 
     public Teammitglied(Long discordAccount, Set<Rolle> rollen, String leagueName) {
-        if(null == discordAccount || null == leagueName){
+        if (null == discordAccount || null == leagueName) {
             throw new NullPointerException();
         }
         this.discordAccount = discordAccount;
@@ -38,11 +37,11 @@ public class Teammitglied implements Executor {
         return false;
     }
 
-    public boolean isEqual(Teammitglied teammitglied){
-       return this.getDiscordAccount().equals(teammitglied.getDiscordAccount());
+    public boolean isEqual(Teammitglied teammitglied) {
+        return this.getDiscordAccount().equals(teammitglied.getDiscordAccount());
     }
 
-    public boolean isCaptain(){
+    public boolean isCaptain() {
         return this.rollen.contains(Rolle.CAPTAIN);
     }
 

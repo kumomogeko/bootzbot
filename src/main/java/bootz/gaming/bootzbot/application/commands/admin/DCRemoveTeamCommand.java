@@ -25,6 +25,7 @@ public class DCRemoveTeamCommand extends AbstractRegistrableCommand {
         this.teamService = teamService;
         this.executorFactory = executorFactory;
     }
+
     @Override
     public ApplicationCommandRequest getDiscordCommandRequest() {
         return ApplicationCommandRequest.builder()

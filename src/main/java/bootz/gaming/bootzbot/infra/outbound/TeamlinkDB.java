@@ -14,7 +14,7 @@ public class TeamlinkDB {
     public TeamlinkDB() {
     }
 
-    public TeamlinkDB(Teamlink teamlink){
+    public TeamlinkDB(Teamlink teamlink) {
         this.name = teamlink.getName();
         this.link = teamlink.getLink();
     }
@@ -35,7 +35,7 @@ public class TeamlinkDB {
         this.link = link;
     }
 
-    public Teamlink toTeamlink(){
-        return new Teamlink(this.name,this.link);
+    public Teamlink toTeamlink() {
+        return new Teamlink(this.name, this.link);
     }
 }

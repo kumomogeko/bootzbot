@@ -17,7 +17,7 @@ public class TeammitgliedDB {
     public TeammitgliedDB() {
     }
 
-    public TeammitgliedDB(Teammitglied teammitglied){
+    public TeammitgliedDB(Teammitglied teammitglied) {
         this.discordAccount = teammitglied.getDiscordAccount();
         this.rollen = teammitglied.getRollen();
         this.leagueName = teammitglied.getLeagueName();
@@ -51,7 +51,7 @@ public class TeammitgliedDB {
         this.leagueName = leagueName;
     }
 
-    public Teammitglied toTeammitglied(){
-        return new Teammitglied(this.discordAccount,this.rollen, this.leagueName);
+    public Teammitglied toTeammitglied() {
+        return new Teammitglied(this.discordAccount, this.rollen, this.leagueName);
     }
 }

@@ -13,13 +13,14 @@ public class DiscordBotAccessProvision {
     private final GatewayDiscordClient client;
 
     public DiscordBotAccessProvision(DiscordClientProperties props) {
-       this.client =  DiscordClient.create(props.getToken())
-               .gateway()
-               .setEnabledIntents(IntentSet.none())
-               .login()
-               .block();
+        this.client = DiscordClient.create(props.getToken())
+                .gateway()
+                .setEnabledIntents(IntentSet.none())
+                .login()
+                .block();
     }
+
     public GatewayDiscordClient getClient() {
-       return client;
-   }
+        return client;
+    }
 }

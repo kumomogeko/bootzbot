@@ -58,7 +58,7 @@ public class DCRemoveTeammitgliedCommand extends AbstractRegistrableCommand {
                 var teamName = getOption(event, teamnameOption, ApplicationCommandInteractionOptionValue::asString);
                 var discord = getOption(event, spielerdiscordOption, ApplicationCommandInteractionOptionValue::asSnowflake);
                 //FIXME Teammitglied creation is unnecessary here
-                var command = new RemoveTeammitgliedCommand(executor, new TeamId(guildId.asLong(), teamName), new Teammitglied(discord.asLong(), Set.of(),""));
+                var command = new RemoveTeammitgliedCommand(executor, new TeamId(guildId.asLong(), teamName), new Teammitglied(discord.asLong(), Set.of(), ""));
                 return teamService.removeTeammitglied(command).then(event.reply(String.format("Teammitglied entfernt: <@%s>", discord.asString())));
             });
         };

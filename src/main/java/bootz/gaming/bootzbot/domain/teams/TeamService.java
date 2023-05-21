@@ -10,8 +10,8 @@ import bootz.gaming.bootzbot.domain.teams.teammitglied.Teammitglied;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -44,7 +44,7 @@ public class TeamService {
         return this.repository.delete(command.teamId());
     }
 
-    public Mono<List<Team>> getTeams(){
+    public Mono<List<Team>> getTeams() {
         return this.repository.getTeams();
     }
 

@@ -2,7 +2,6 @@ package bootz.gaming.bootzbot.infra.outbound;
 
 import bootz.gaming.bootzbot.domain.teams.Team;
 import bootz.gaming.bootzbot.domain.teams.TeammitgliedDB;
-import bootz.gaming.bootzbot.domain.teams.teamlinks.Teamlink;
 import reactor.util.annotation.Nullable;
 
 import java.util.List;

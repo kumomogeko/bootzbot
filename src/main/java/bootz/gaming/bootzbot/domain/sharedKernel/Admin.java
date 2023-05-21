@@ -2,7 +2,7 @@ package bootz.gaming.bootzbot.domain.sharedKernel;
 
 import discord4j.common.util.Snowflake;
 
-public class Admin implements Executor{
+public class Admin implements Executor {
     private final Snowflake snowflake;
 
     public Admin(Snowflake snowflake) {

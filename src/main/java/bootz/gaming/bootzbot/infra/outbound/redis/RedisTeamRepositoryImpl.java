@@ -31,12 +31,12 @@ public class RedisTeamRepositoryImpl implements TeamRepository {
     public Mono<Void> save(Team team) {
         var teamdId = TeamId.fromTeam(team);
         var dbo = new TeamDBO(teamdId.toString(), teamdId, team);
-        return redisOperations.opsForHash().put(KEY,dbo.id,dbo).then();
+        return redisOperations.opsForHash().put(KEY, dbo.id, dbo).then();
     }
 
     @Override
     public Mono<Void> delete(TeamId teamId) {
-        return redisOperations.opsForHash().remove(KEY,teamId.toString()).then();
+        return redisOperations.opsForHash().remove(KEY, teamId.toString()).then();
     }
 
     @Override

@@ -18,12 +18,11 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Map;
 import java.util.function.Function;
 
 @Component
-public class DCListTeamlinksCommand extends AbstractRegistrableCommand{
+public class DCListTeamlinksCommand extends AbstractRegistrableCommand {
     private final TeamService teamService;
     private final ExecutorFactory executorFactory;
     private final String teamnameOption = "teamname";
@@ -53,8 +52,8 @@ public class DCListTeamlinksCommand extends AbstractRegistrableCommand{
             var guildId = event.getInteraction().getGuildId().orElseThrow();
             var member = event.getInteraction().getMember().orElseThrow();
             return this.executorFactory.executorFromMember(member).flatMap(executor -> {
-                var teamname = getOption(event,teamnameOption, ApplicationCommandInteractionOptionValue::asString);
-                var command = new TeamReadCommand(executor, new TeamId(guildId.asLong(),teamname));
+                var teamname = getOption(event, teamnameOption, ApplicationCommandInteractionOptionValue::asString);
+                var command = new TeamReadCommand(executor, new TeamId(guildId.asLong(), teamname));
 
                 return teamService.getLinks(command).flatMap(links -> {
                     var replySpec = InteractionApplicationCommandCallbackSpec.builder()
@@ -67,10 +66,10 @@ public class DCListTeamlinksCommand extends AbstractRegistrableCommand{
 
     private EmbedCreateSpec createLinkSpec(String teamname, Map<String, Teamlink> links) {
         var linkFieldList = new ArrayList<EmbedCreateFields.Field>();
-        for(var link: links.entrySet()){
-            linkFieldList.add(EmbedCreateFields.Field.of("Beschreibung", link.getValue().getName() ,false));
-            linkFieldList.add(EmbedCreateFields.Field.of("ID", link.getKey() ,true));
-            linkFieldList.add(EmbedCreateFields.Field.of("Link", link.getValue().getLink(),true));
+        for (var link : links.entrySet()) {
+            linkFieldList.add(EmbedCreateFields.Field.of("Beschreibung", link.getValue().getName(), false));
+            linkFieldList.add(EmbedCreateFields.Field.of("ID", link.getKey(), true));
+            linkFieldList.add(EmbedCreateFields.Field.of("Link", link.getValue().getLink(), true));
         }
 
         return EmbedCreateSpec.builder().color(Color.of(0x181d29))

@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.function.Function;
 
 @Component
-public class DCListTeamMembersCommand extends AbstractRegistrableCommand{
+public class DCListTeamMembersCommand extends AbstractRegistrableCommand {
 
     private final TeamService teamService;
     private final ExecutorFactory executorFactory;
@@ -53,8 +53,8 @@ public class DCListTeamMembersCommand extends AbstractRegistrableCommand{
             var guildId = event.getInteraction().getGuildId().orElseThrow();
             var member = event.getInteraction().getMember().orElseThrow();
             return this.executorFactory.executorFromMember(member).flatMap(executor -> {
-                var teamname = getOption(event,teamnameOption, ApplicationCommandInteractionOptionValue::asString);
-                var command = new TeamReadCommand(executor, new TeamId(guildId.asLong(),teamname));
+                var teamname = getOption(event, teamnameOption, ApplicationCommandInteractionOptionValue::asString);
+                var command = new TeamReadCommand(executor, new TeamId(guildId.asLong(), teamname));
 
                 return teamService.listMembers(command).flatMap(members -> {
                     var replySpec = InteractionApplicationCommandCallbackSpec.builder()
@@ -67,10 +67,10 @@ public class DCListTeamMembersCommand extends AbstractRegistrableCommand{
 
     private EmbedCreateSpec createMemberSpec(String teamname, List<Teammitglied> members) {
         var memberFieldList = new ArrayList<EmbedCreateFields.Field>();
-        for(var member: members){
-            memberFieldList.add(EmbedCreateFields.Field.of("Spieler", String.format("<@%s>", member.getDiscordAccount()),false));
-            memberFieldList.add(EmbedCreateFields.Field.of("League", String.format("%s", member.getLeagueName()),true));
-            memberFieldList.add(EmbedCreateFields.Field.of("Captain", (member.isCaptain()? "Ja": "Nein"),true));
+        for (var member : members) {
+            memberFieldList.add(EmbedCreateFields.Field.of("Spieler", String.format("<@%s>", member.getDiscordAccount()), false));
+            memberFieldList.add(EmbedCreateFields.Field.of("League", String.format("%s", member.getLeagueName()), true));
+            memberFieldList.add(EmbedCreateFields.Field.of("Captain", (member.isCaptain() ? "Ja" : "Nein"), true));
         }
 
         return EmbedCreateSpec.builder().color(Color.of(0x181d29))

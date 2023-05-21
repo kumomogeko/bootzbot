@@ -35,7 +35,7 @@ public class TeamIdDB {
         this.name = name;
     }
 
-    public TeamId toTeamId(){
+    public TeamId toTeamId() {
         return new TeamId(this.guild, this.name);
     }
 }

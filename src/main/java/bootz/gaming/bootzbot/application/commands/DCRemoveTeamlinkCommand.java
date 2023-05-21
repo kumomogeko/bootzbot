@@ -21,6 +21,7 @@ public class DCRemoveTeamlinkCommand extends AbstractRegistrableCommand {
     private final ExecutorFactory executorFactory;
     private final String teamnameOption = "teamname";
     private final String linkidOption = "linkid";
+
     public DCRemoveTeamlinkCommand(TeamService teamService, ExecutorFactory executorFactory) {
         this.teamService = teamService;
         this.executorFactory = executorFactory;
