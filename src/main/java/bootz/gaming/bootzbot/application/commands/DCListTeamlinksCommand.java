@@ -19,6 +19,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import java.util.function.Function;
 
 @Component
@@ -64,11 +65,12 @@ public class DCListTeamlinksCommand extends AbstractRegistrableCommand{
         };
     }
 
-    private EmbedCreateSpec createLinkSpec(String teamname, Collection<Teamlink> links) {
+    private EmbedCreateSpec createLinkSpec(String teamname, Map<String, Teamlink> links) {
         var linkFieldList = new ArrayList<EmbedCreateFields.Field>();
-        for(var link: links){
-            linkFieldList.add(EmbedCreateFields.Field.of("Beschreibung", link.getName() ,false));
-            linkFieldList.add(EmbedCreateFields.Field.of("Link", link.getLink(),true));
+        for(var link: links.entrySet()){
+            linkFieldList.add(EmbedCreateFields.Field.of("Beschreibung", link.getValue().getName() ,false));
+            linkFieldList.add(EmbedCreateFields.Field.of("ID", link.getKey() ,true));
+            linkFieldList.add(EmbedCreateFields.Field.of("Link", link.getValue().getLink(),true));
         }
 
         return EmbedCreateSpec.builder().color(Color.of(0x181d29))

@@ -10,7 +10,7 @@ import bootz.gaming.bootzbot.domain.teams.teammitglied.Teammitglied;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-import java.util.Collection;
+import java.util.Map;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -69,7 +69,7 @@ public class TeamService {
         return this.executeTeamReadActionFromRepo(Team::getMembers, command);
     }
 
-    public Mono<Collection<Teamlink>> getLinks(TeamReadCommand command) {
+    public Mono<Map<String, Teamlink>> getLinks(TeamReadCommand command) {
         return this.executeTeamReadActionFromRepo(Team::getLinklist, command);
     }
 

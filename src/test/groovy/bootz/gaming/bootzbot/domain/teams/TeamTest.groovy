@@ -11,7 +11,7 @@ import discord4j.common.util.Snowflake
 import spock.lang.Specification
 
 class TeamTest extends Specification {
-    def discordAccount = Snowflake.of(Snowflake.DISCORD_EPOCH)
+    def discordAccount = Snowflake.of(Snowflake.DISCORD_EPOCH).asLong()
     def guildId = 1l
     def teamname = ""
     def teamId = new TeamId(guildId, teamname)
@@ -113,7 +113,7 @@ class TeamTest extends Specification {
 
     def "Rejects Links from a non member"() {
         given:
-        def teammitglied = new Teammitglied(Snowflake.of(1l), Set.of(), "B")
+        def teammitglied = new Teammitglied(Snowflake.of(1l).asLong(), Set.of(), "B")
         def team = new Team(guildId, teamname, [new Teammitglied(discordAccount, Set.of(), "A"), new Teammitglied(discordAccount, Set.of(), "C")], [:], null)
         def linkId = "asdf"
         def teamlink = new Teamlink("Das ist ein Link", "https://bootz-gaming.com/bootz-gaming-teams/")

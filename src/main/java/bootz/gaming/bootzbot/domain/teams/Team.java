@@ -21,13 +21,12 @@ import java.util.stream.Collectors;
 @AggregateRoot
 public class Team {
 
-
-
     private final Long guildId;
     private String teamname;
 
     private final List<Teammitglied> members;
     private final Map<String, Teamlink> links;
+
 
     @Nullable
     private String customOpggTeamlinkRef;
@@ -119,8 +118,8 @@ public class Team {
         return links;
     }
 
-    public Collection<Teamlink> getLinklist() {
-        return links.values();
+    public Map<String, Teamlink> getLinklist() {
+        return links;
     }
 
     public List<Teammitglied> getMembers() {
@@ -134,4 +133,10 @@ public class Team {
     public String getTeamname() {
         return teamname;
     }
+
+    @Nullable
+    public String getCustomOpggTeamlinkRef() {
+        return customOpggTeamlinkRef;
+    }
+
 }

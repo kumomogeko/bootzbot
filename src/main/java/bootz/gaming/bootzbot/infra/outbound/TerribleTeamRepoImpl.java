@@ -3,12 +3,14 @@ package bootz.gaming.bootzbot.infra.outbound;
 import bootz.gaming.bootzbot.domain.teams.Team;
 import bootz.gaming.bootzbot.domain.teams.TeamId;
 import bootz.gaming.bootzbot.domain.teams.TeamRepository;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 
 @Component
+@Profile("!redis")
 public class TerribleTeamRepoImpl implements TeamRepository {
 
     private final HashMap<TeamId, Team> repo;

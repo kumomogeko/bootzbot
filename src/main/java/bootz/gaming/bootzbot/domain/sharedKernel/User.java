@@ -10,8 +10,8 @@ public class User implements Executor{
         this.snowflake = snowflake;
     }
     @Override
-    public Snowflake getDiscordAccount() {
-        return this.snowflake;
+    public Long getDiscordAccount() {
+        return this.snowflake.asLong();
     }
 
     @Override

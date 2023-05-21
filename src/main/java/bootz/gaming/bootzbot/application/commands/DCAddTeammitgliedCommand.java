@@ -74,7 +74,7 @@ public class DCAddTeammitgliedCommand extends AbstractRegistrableCommand {
                 var leagueName = getOption(event, leaguenameOption, ApplicationCommandInteractionOptionValue::asString);
                 var discord = getOption(event, spielerdiscordOption, ApplicationCommandInteractionOptionValue::asSnowflake);
                 var roles = getNonRequiredOption(event, istCapOption, ApplicationCommandInteractionOptionValue::asBoolean).orElse(false) ? Set.of(Rolle.CAPTAIN, Rolle.MITGLIED) : Set.of(Rolle.MITGLIED);
-                var command = new AddTeammitgliedCommand(executor, new TeamId(guildId.asLong(), teamName), new Teammitglied(discord, roles, leagueName));
+                var command = new AddTeammitgliedCommand(executor, new TeamId(guildId.asLong(), teamName), new Teammitglied(discord.asLong(), roles, leagueName));
                 return teamService.addTeammitglied(command).then(event.reply("Mitglied hinzugefügt"));
             });
         };

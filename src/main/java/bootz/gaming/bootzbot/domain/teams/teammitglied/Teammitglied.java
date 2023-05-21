@@ -11,12 +11,12 @@ import java.util.Set;
 public class Teammitglied implements Executor {
 
     @NonNull
-    private final Snowflake discordAccount;
+    private final Long discordAccount;
     private Set<Rolle> rollen;
     @NonNull
     private String leagueName;
 
-    public Teammitglied(Snowflake discordAccount, Set<Rolle> rollen, String leagueName) {
+    public Teammitglied(Long discordAccount, Set<Rolle> rollen, String leagueName) {
         if(null == discordAccount || null == leagueName){
             throw new NullPointerException();
         }
@@ -29,7 +29,7 @@ public class Teammitglied implements Executor {
         return leagueName;
     }
 
-    public Snowflake getDiscordAccount() {
+    public Long getDiscordAccount() {
         return discordAccount;
     }
 
@@ -44,5 +44,10 @@ public class Teammitglied implements Executor {
 
     public boolean isCaptain(){
         return this.rollen.contains(Rolle.CAPTAIN);
+    }
+
+
+    public Set<Rolle> getRollen() {
+        return this.rollen;
     }
 }

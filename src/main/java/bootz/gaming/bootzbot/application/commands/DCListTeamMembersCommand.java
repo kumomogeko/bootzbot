@@ -68,7 +68,7 @@ public class DCListTeamMembersCommand extends AbstractRegistrableCommand{
     private EmbedCreateSpec createMemberSpec(String teamname, List<Teammitglied> members) {
         var memberFieldList = new ArrayList<EmbedCreateFields.Field>();
         for(var member: members){
-            memberFieldList.add(EmbedCreateFields.Field.of("Spieler", String.format("<@%s>", member.getDiscordAccount().asString()),false));
+            memberFieldList.add(EmbedCreateFields.Field.of("Spieler", String.format("<@%s>", member.getDiscordAccount()),false));
             memberFieldList.add(EmbedCreateFields.Field.of("League", String.format("%s", member.getLeagueName()),true));
             memberFieldList.add(EmbedCreateFields.Field.of("Captain", (member.isCaptain()? "Ja": "Nein"),true));
         }

@@ -10,8 +10,8 @@ public class Admin implements Executor{
     }
 
     @Override
-    public Snowflake getDiscordAccount() {
-        return snowflake;
+    public Long getDiscordAccount() {
+        return snowflake.asLong();
     }
 
     @Override
