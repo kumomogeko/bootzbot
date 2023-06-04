@@ -37,7 +37,7 @@ public class DiscordEventRegistrar {
 
     public void registerCommands() {
         RestClient restClient = client.getRestClient();
-        var appId = 1108533746627530802L;
+        var appId = Long.parseLong(System.getenv("APP_ID"));
         //var guildId = 1108533746627530802L;
         ApplicationService applicationService = restClient.getApplicationService();
         for (var command : commandRegistrarList) {
@@ -50,11 +50,13 @@ public class DiscordEventRegistrar {
 
     public void reactCommands() {
         client
-                .on(ChatInputInteractionEvent.class, event ->
-                        this.commandList.get(event.getCommandName())
-                                .getCommandHandler()
-                                .apply(event)
-                                .onErrorResume(throwable -> event.reply(String.format("Fehler: %s", throwable.getMessage()))))
+                .on(ChatInputInteractionEvent.class, event -> {
+                    System.out.println("Event recieved: " + event.getCommandName());
+                    return this.commandList.get(event.getCommandName())
+                            .getCommandHandler()
+                            .apply(event)
+                            .onErrorResume(throwable -> event.reply(String.format("Fehler: %s", throwable.getMessage())));
+                })
                 .subscribe();
     }
 }

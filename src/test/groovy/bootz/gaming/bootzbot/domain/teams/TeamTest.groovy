@@ -1,11 +1,11 @@
 package bootz.gaming.bootzbot.domain.teams
 
 import bootz.gaming.bootzbot.domain.sharedKernel.Admin
-import bootz.gaming.bootzbot.domain.teams.teamlinks.AddTeamLinkCommand
-import bootz.gaming.bootzbot.domain.teams.teamlinks.RemoveTeamLinkCommand
+import bootz.gaming.bootzbot.domain.teams.teamlinks.AddTeamLinkTeamCommand
+import bootz.gaming.bootzbot.domain.teams.teamlinks.RemoveTeamLinkTeamCommand
 import bootz.gaming.bootzbot.domain.teams.teamlinks.Teamlink
-import bootz.gaming.bootzbot.domain.teams.teammitglied.AddTeammitgliedCommand
-import bootz.gaming.bootzbot.domain.teams.teammitglied.RemoveTeammitgliedCommand
+import bootz.gaming.bootzbot.domain.teams.teammitglied.AddTeammitgliedTeamCommand
+import bootz.gaming.bootzbot.domain.teams.teammitglied.RemoveTeammitgliedTeamCommand
 import bootz.gaming.bootzbot.domain.teams.teammitglied.Teammitglied
 import discord4j.common.util.Snowflake
 import spock.lang.Specification
@@ -23,7 +23,7 @@ class TeamTest extends Specification {
         def team = new Team(guildId, teamname, [new Teammitglied(discordAccount, Set.of(), "B")], [:], null)
 
         when:
-        team.removeTeammitglied(new RemoveTeammitgliedCommand(admin, teamId, teammitglied))
+        team.removeTeammitglied(new RemoveTeammitgliedTeamCommand(admin, teamId, teammitglied))
 
         then:
         team.getMembers().isEmpty()
@@ -36,7 +36,7 @@ class TeamTest extends Specification {
         def team = new Team(guildId, teamname, [], [:], null)
 
         when:
-        team.removeTeammitglied(new RemoveTeammitgliedCommand(admin, teamId, teammitglied))
+        team.removeTeammitglied(new RemoveTeammitgliedTeamCommand(admin, teamId, teammitglied))
 
         then:
         thrown(RuntimeException)
@@ -49,7 +49,7 @@ class TeamTest extends Specification {
         def team = new Team(guildId, teamname, [], [:], null)
 
         when:
-        team.addTeammitglied(new AddTeammitgliedCommand(admin, teamId, teammitglied))
+        team.addTeammitglied(new AddTeammitgliedTeamCommand(admin, teamId, teammitglied))
         then:
         team.getMembers().contains(teammitglied)
     }
@@ -61,7 +61,7 @@ class TeamTest extends Specification {
         def team = new Team(guildId, teamname, [teammitglied], [:], null)
 
         when:
-        team.addTeammitglied(new AddTeammitgliedCommand(admin, teamId, teammitglied))
+        team.addTeammitglied(new AddTeammitgliedTeamCommand(admin, teamId, teammitglied))
         then:
         thrown(RuntimeException)
     }
@@ -76,7 +76,7 @@ class TeamTest extends Specification {
         def team = new Team(guildId, teamname, [teammitglied], ["link": teamlink], "link")
 
         when:
-        team.removeTeamLink(new RemoveTeamLinkCommand(admin, teamId, "link"))
+        team.removeTeamLink(new RemoveTeamLinkTeamCommand(admin, teamId, "link"))
         then:
         team.getLinks().isEmpty()
         team.getOpGG() != teamlink.getLink()
@@ -90,7 +90,7 @@ class TeamTest extends Specification {
         def teamlink = new Teamlink("Das ist ein Link", "https://bootz-gaming.com/bootz-gaming-teams/")
 
         when:
-        team.addOrUpdateTeamLink(new AddTeamLinkCommand(teammitglied, teamId, linkId, teamlink, false))
+        team.addOrUpdateTeamLink(new AddTeamLinkTeamCommand(teammitglied, teamId, linkId, teamlink, false))
 
         then:
         team.getLinks().containsKey(linkId)
@@ -105,7 +105,7 @@ class TeamTest extends Specification {
         def teamlink = new Teamlink("Das ist ein Link", "https://bootz-gaming.com/bootz-gaming-teams/")
 
         when:
-        team.addOrUpdateTeamLink(new AddTeamLinkCommand(admin, teamId, linkId, teamlink, true))
+        team.addOrUpdateTeamLink(new AddTeamLinkTeamCommand(admin, teamId, linkId, teamlink, true))
 
         then:
         team.getOpGG() == teamlink.getLink()
@@ -119,7 +119,7 @@ class TeamTest extends Specification {
         def teamlink = new Teamlink("Das ist ein Link", "https://bootz-gaming.com/bootz-gaming-teams/")
 
         when:
-        team.addOrUpdateTeamLink(new AddTeamLinkCommand(teammitglied, teamId, linkId, teamlink, true))
+        team.addOrUpdateTeamLink(new AddTeamLinkTeamCommand(teammitglied, teamId, linkId, teamlink, true))
 
         then:
         thrown(RuntimeException)

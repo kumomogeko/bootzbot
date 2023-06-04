@@ -1,11 +1,13 @@
 package bootz.gaming.bootzbot.domain.teams;
 
+import bootz.gaming.bootzbot.domain.sharedKernel.DomainEventPublisher;
 import bootz.gaming.bootzbot.domain.sharedKernel.Executor;
-import bootz.gaming.bootzbot.domain.teams.teamlinks.AddTeamLinkCommand;
-import bootz.gaming.bootzbot.domain.teams.teamlinks.RemoveTeamLinkCommand;
+import bootz.gaming.bootzbot.domain.sharedKernel.TeamUpdatedEvent;
+import bootz.gaming.bootzbot.domain.teams.teamlinks.AddTeamLinkTeamCommand;
+import bootz.gaming.bootzbot.domain.teams.teamlinks.RemoveTeamLinkTeamCommand;
 import bootz.gaming.bootzbot.domain.teams.teamlinks.Teamlink;
-import bootz.gaming.bootzbot.domain.teams.teammitglied.AddTeammitgliedCommand;
-import bootz.gaming.bootzbot.domain.teams.teammitglied.RemoveTeammitgliedCommand;
+import bootz.gaming.bootzbot.domain.teams.teammitglied.AddTeammitgliedTeamCommand;
+import bootz.gaming.bootzbot.domain.teams.teammitglied.RemoveTeammitgliedTeamCommand;
 import bootz.gaming.bootzbot.domain.teams.teammitglied.Teammitglied;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -19,13 +21,15 @@ import java.util.function.Function;
 public class TeamService {
     private final TeamRepository repository;
     private final TeamFactory teamFactory;
+    private final DomainEventPublisher publisher;
 
-    public TeamService(TeamRepository repository, TeamFactory teamFactory) {
+    public TeamService(TeamRepository repository, TeamFactory teamFactory, DomainEventPublisher publisher) {
         this.repository = repository;
         this.teamFactory = teamFactory;
+        this.publisher = publisher;
     }
 
-    public Mono<Void> addTeam(AddTeamCommand command) {
+    public Mono<Void> addTeam(AddTeamTeamCommand command) {
         if (notAllowedToExecuteTeamAdminAction(command.runner())) {
             return Mono.error(new RuntimeException("Keine Berechtigung!"));
         }
@@ -34,46 +38,48 @@ public class TeamService {
                 .map(team -> {
                     throw new RuntimeException("Team existiert bereits!");
                 }).thenEmpty(Mono.empty())
-                .switchIfEmpty(repository.save(teamFactory.fromTeamId(command.teamId())));
+                .switchIfEmpty(repository.save(teamFactory.fromTeamId(command.teamId())))
+                .doOnSuccess(unused -> this.publisher.publishEvent(new TeamUpdatedEvent(command.teamId())));
     }
 
-    public Mono<Void> removeTeam(RemoveTeamCommand command) {
+    public Mono<Void> removeTeam(RemoveTeamTeamCommand command) {
         if (notAllowedToExecuteTeamAdminAction(command.runner())) {
             return Mono.error(new RuntimeException("Keine Berechtigung!"));
         }
-        return this.repository.delete(command.teamId());
+        return this.repository.delete(command.teamId())
+                .doOnSuccess(unused -> this.publisher.publishEvent(new TeamUpdatedEvent(command.teamId())));
     }
 
     public Mono<List<Team>> getTeams() {
         return this.repository.getTeams();
     }
 
-    public Mono<Void> addTeammitglied(AddTeammitgliedCommand command) {
+    public Mono<Void> addTeammitglied(AddTeammitgliedTeamCommand command) {
         return this.executeTeamActionFromRepoAndSave(Team::addTeammitglied, command);
     }
 
 
-    public Mono<Void> removeTeammitglied(RemoveTeammitgliedCommand command) {
+    public Mono<Void> removeTeammitglied(RemoveTeammitgliedTeamCommand command) {
         return this.executeTeamActionFromRepoAndSave(Team::removeTeammitglied, command);
     }
 
-    public Mono<Void> addTeamlink(AddTeamLinkCommand command) {
+    public Mono<Void> addTeamlink(AddTeamLinkTeamCommand command) {
         return this.executeTeamActionFromRepoAndSave(Team::addOrUpdateTeamLink, command);
     }
 
-    public Mono<Void> removeTeamlink(RemoveTeamLinkCommand command) {
+    public Mono<Void> removeTeamlink(RemoveTeamLinkTeamCommand command) {
         return this.executeTeamActionFromRepoAndSave(Team::removeTeamLink, command);
     }
 
-    public Mono<String> getOpgg(TeamReadCommand command) {
+    public Mono<String> getOpgg(TeamReadTeamCommand command) {
         return this.executeTeamReadActionFromRepo(Team::getOpGG, command);
     }
 
-    public Mono<List<Teammitglied>> listMembers(TeamReadCommand command) {
+    public Mono<List<Teammitglied>> listMembers(TeamReadTeamCommand command) {
         return this.executeTeamReadActionFromRepo(Team::getMembers, command);
     }
 
-    public Mono<Map<String, Teamlink>> getLinks(TeamReadCommand command) {
+    public Mono<Map<String, Teamlink>> getLinks(TeamReadTeamCommand command) {
         return this.executeTeamReadActionFromRepo(Team::getLinklist, command);
     }
 
@@ -81,17 +87,19 @@ public class TeamService {
         return !executor.isAdmin();
     }
 
-    private <X extends Command> Mono<Void> executeTeamActionFromRepoAndSave(BiConsumer<Team, X> consumer, X command) {
+    private <X extends TeamCommand> Mono<Void> executeTeamActionFromRepoAndSave(BiConsumer<Team, X> consumer, X command) {
         return this.repository
                 .getTeamByTeamId(command.teamId())
                 .switchIfEmpty(Mono.error(new RuntimeException("Team nicht gefunden oder existiert nicht!")))
                 .map(team -> {
                     consumer.accept(team, command);
                     return team;
-                }).flatMap(this.repository::save);
+                }).flatMap(this.repository::save).doOnSuccess(unused -> {
+                    this.publisher.publishEvent(new TeamUpdatedEvent(command.teamId()));
+                });
     }
 
-    private <X extends Command, Y> Mono<Y> executeTeamReadActionFromRepo(Function<Team, Y> consumer, X command) {
+    private <X extends TeamCommand, Y> Mono<Y> executeTeamReadActionFromRepo(Function<Team, Y> consumer, X command) {
         return this.repository
                 .getTeamByTeamId(command.teamId())
                 .switchIfEmpty(Mono.error(new RuntimeException("Team nicht gefunden oder existiert nicht!")))

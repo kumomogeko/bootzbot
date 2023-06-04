@@ -1,11 +1,11 @@
 package bootz.gaming.bootzbot.domain.teams;
 
 import bootz.gaming.bootzbot.domain.sharedKernel.Executor;
-import bootz.gaming.bootzbot.domain.teams.teamlinks.AddTeamLinkCommand;
-import bootz.gaming.bootzbot.domain.teams.teamlinks.RemoveTeamLinkCommand;
+import bootz.gaming.bootzbot.domain.teams.teamlinks.AddTeamLinkTeamCommand;
+import bootz.gaming.bootzbot.domain.teams.teamlinks.RemoveTeamLinkTeamCommand;
 import bootz.gaming.bootzbot.domain.teams.teamlinks.Teamlink;
-import bootz.gaming.bootzbot.domain.teams.teammitglied.AddTeammitgliedCommand;
-import bootz.gaming.bootzbot.domain.teams.teammitglied.RemoveTeammitgliedCommand;
+import bootz.gaming.bootzbot.domain.teams.teammitglied.AddTeammitgliedTeamCommand;
+import bootz.gaming.bootzbot.domain.teams.teammitglied.RemoveTeammitgliedTeamCommand;
 import bootz.gaming.bootzbot.domain.teams.teammitglied.Teammitglied;
 import bootz.gaming.bootzbot.util.AggregateRoot;
 import reactor.util.annotation.Nullable;
@@ -49,7 +49,7 @@ public class Team {
         return String.format("https://www.op.gg/multisearch/euw?summoners=%s", stringSeparatedMembers);
     }
 
-    public void addOrUpdateTeamLink(AddTeamLinkCommand command) {
+    public void addOrUpdateTeamLink(AddTeamLinkTeamCommand command) {
         if (notAllowedToExecuteTeamAction(command.runner())) {
             throw new RuntimeException("Kein Teammitglied!");
         }
@@ -59,7 +59,7 @@ public class Team {
         links.put(command.linkId(), command.link());
     }
 
-    public void removeTeamLink(RemoveTeamLinkCommand command) {
+    public void removeTeamLink(RemoveTeamLinkTeamCommand command) {
         if (notAllowedToExecuteTeamAction(command.runner())) {
             throw new RuntimeException("Kein Teammitglied!");
         }
@@ -73,7 +73,7 @@ public class Team {
         this.links.remove(command.linkId());
     }
 
-    public void addTeammitglied(AddTeammitgliedCommand command) {
+    public void addTeammitglied(AddTeammitgliedTeamCommand command) {
         if (notAllowedToExecuteTeamAction(command.runner())) {
             throw new RuntimeException("Keine Berechtigung!");
         }
@@ -83,7 +83,7 @@ public class Team {
         this.members.add(command.teammitglied());
     }
 
-    public void removeTeammitglied(RemoveTeammitgliedCommand command) {
+    public void removeTeammitglied(RemoveTeammitgliedTeamCommand command) {
         if (notAllowedToExecuteTeamAction(command.runner())) {
             throw new RuntimeException("Keine Berechtigung!");
         }

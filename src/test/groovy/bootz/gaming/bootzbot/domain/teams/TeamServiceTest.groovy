@@ -14,9 +14,9 @@ class TeamServiceTest extends Specification {
 
     def "Will get Link list from specified Team"() {
         given:
-        def sut = new TeamService(teamRepository, teamFactory)
+        def sut = new TeamService(teamRepository, teamFactory, publisher)
         def teamId = new TeamId(2l, "test")
-        def command = new TeamReadCommand(admin, teamId)
+        def command = new TeamReadTeamCommand(admin, teamId)
         def teamlink = new Teamlink("A link", "https://bootz-gaming.com/")
         when:
         def result = sut.getLinks(command).block()

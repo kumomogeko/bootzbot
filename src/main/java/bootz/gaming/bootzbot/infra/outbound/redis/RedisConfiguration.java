@@ -1,6 +1,7 @@
 package bootz.gaming.bootzbot.infra.outbound.redis;
 
-import bootz.gaming.bootzbot.infra.outbound.TeamDBO;
+import bootz.gaming.bootzbot.infra.outbound.staticview.StaticViewDBO;
+import bootz.gaming.bootzbot.infra.outbound.team.dbo.TeamDBO;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -23,6 +24,21 @@ public class RedisConfiguration {
         RedisSerializationContext.RedisSerializationContextBuilder<String, TeamDBO> builder =
                 RedisSerializationContext.newSerializationContext(new StringRedisSerializer());
         RedisSerializationContext<String, TeamDBO> context = builder
+                .value(serializer)
+                .hashKey(stringSerializer)
+                .hashValue(serializer)
+                .build();
+        return new ReactiveRedisTemplate<>(factory, context);
+    }
+
+    @Bean
+    public ReactiveRedisOperations<String, StaticViewDBO> stringStaticViewDBOReactiveRedisOperations(ReactiveRedisConnectionFactory factory) {
+        Jackson2JsonRedisSerializer<StaticViewDBO> serializer = new Jackson2JsonRedisSerializer<>(StaticViewDBO.class);
+        Jackson2JsonRedisSerializer<String> stringSerializer = new Jackson2JsonRedisSerializer<>(String.class);
+
+        RedisSerializationContext.RedisSerializationContextBuilder<String, StaticViewDBO> builder =
+                RedisSerializationContext.newSerializationContext(new StringRedisSerializer());
+        RedisSerializationContext<String, StaticViewDBO> context = builder
                 .value(serializer)
                 .hashKey(stringSerializer)
                 .hashValue(serializer)
