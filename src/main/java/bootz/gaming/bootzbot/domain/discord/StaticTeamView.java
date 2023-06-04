@@ -2,6 +2,7 @@ package bootz.gaming.bootzbot.domain.discord;
 
 import bootz.gaming.bootzbot.application.discord.TeamEmbedViewService;
 import bootz.gaming.bootzbot.domain.teams.TeamService;
+import bootz.gaming.bootzbot.util.AggregateRoot;
 import discord4j.common.util.Snowflake;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.object.entity.channel.GuildMessageChannel;
@@ -9,6 +10,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.Objects;
 
+@AggregateRoot
 public final class StaticTeamView {
     private final String id;
     private final Snowflake guild;
@@ -29,6 +31,10 @@ public final class StaticTeamView {
         this(guild.asString() + channel.asString(), guild, channel);
     }
 
+    /**
+     *
+     * @return An id composed of the guild id followed by the channel id
+     */
     public String id() {
         return id;
     }
@@ -71,7 +77,6 @@ public final class StaticTeamView {
                 .flatMap(objects -> {
                     var channel = objects.getT1();
                     var teamsList = objects.getT2();
-                    System.out.println("Sending updated team list");
                     return channel.createMessage(embedViewService.createTeamSpec(teamsList)).then();
                 });
     }

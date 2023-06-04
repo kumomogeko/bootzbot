@@ -40,7 +40,6 @@ public class TerribleStaticViewRepoImpl implements StaticViewRepository {
 
     @Override
     public Mono<List<StaticTeamView>> getByGuild(Snowflake guildId) {
-        System.out.println("Getting Views by Guild");
         return Mono.justOrEmpty(this.repo.values().stream().filter(view -> view.guild().equals(guildId)).collect(Collectors.toList()));
     }
 }

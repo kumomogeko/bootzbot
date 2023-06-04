@@ -51,7 +51,6 @@ public class DiscordEventRegistrar {
     public void reactCommands() {
         client
                 .on(ChatInputInteractionEvent.class, event -> {
-                    System.out.println("Event recieved: " + event.getCommandName());
                     return this.commandList.get(event.getCommandName())
                             .getCommandHandler()
                             .apply(event)

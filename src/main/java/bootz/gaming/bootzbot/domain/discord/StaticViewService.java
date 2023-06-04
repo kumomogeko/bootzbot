@@ -38,14 +38,12 @@ public class StaticViewService {
         if (!command.runner().isAdmin()) {
             return Mono.error(new RuntimeException("Keine Berechtigung!"));
         }
-        System.out.println("Creating static view");
         StaticTeamView view = new StaticTeamView(command);
         return this.repository.save(view);
     }
 
     @EventListener
     public synchronized void sendMessageOnUpdate(TeamUpdatedEvent teamUpdatedEvent) {
-        System.out.println("Team Updated Event recieved");
         this.updatedGuilds.add(Snowflake.of(teamUpdatedEvent.teamId().getGuild()));
     }
 
@@ -55,7 +53,6 @@ public class StaticViewService {
         if (this.updatedGuilds.isEmpty()) {
             return;
         }
-        System.out.println("Updating lagged teams");
         Set<Snowflake> setCopy;
         synchronized (this) {
             setCopy = new HashSet<>(this.updatedGuilds);
