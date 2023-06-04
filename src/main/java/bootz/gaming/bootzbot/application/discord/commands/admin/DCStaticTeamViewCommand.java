@@ -1,18 +1,24 @@
 package bootz.gaming.bootzbot.application.discord.commands.admin;
 
+import bootz.gaming.bootzbot.application.teams.commands.AbstractRegistrableCommand;
 import bootz.gaming.bootzbot.domain.discord.StaticTeamViewTeamCommand;
 import bootz.gaming.bootzbot.domain.discord.StaticViewService;
 import bootz.gaming.bootzbot.domain.sharedKernel.ExecutorFactory;
 import bootz.gaming.bootzbot.domain.sharedKernel.RegistrableCommand;
+import bootz.gaming.bootzbot.domain.teams.teammitglied.Rolle;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
+import discord4j.core.object.command.ApplicationCommandInteractionOptionValue;
+import discord4j.core.object.command.ApplicationCommandOption;
+import discord4j.discordjson.json.ApplicationCommandOptionData;
 import discord4j.discordjson.json.ApplicationCommandRequest;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+import java.util.Set;
 import java.util.function.Function;
 
 @Component
-public class DCStaticTeamViewCommand implements RegistrableCommand {
+public class DCStaticTeamViewCommand extends AbstractRegistrableCommand {
 
     private final ExecutorFactory executorFactory;
     private final StaticViewService staticViewService;
@@ -27,6 +33,12 @@ public class DCStaticTeamViewCommand implements RegistrableCommand {
         return ApplicationCommandRequest.builder()
                 .name("staticteamlist")
                 .description("Erzeugt eine statische Sicht aller Teams, die sich automatisch aktualisiert")
+                .addOption(ApplicationCommandOptionData.builder()
+                        .name("switch")
+                        .description("Aktivieren = true, Deaktivieren= false")
+                        .type(ApplicationCommandOption.Type.BOOLEAN.getValue())
+                        .required(false)
+                        .build())
                 .build();
     }
 
@@ -37,8 +49,11 @@ public class DCStaticTeamViewCommand implements RegistrableCommand {
             var member = event.getInteraction().getMember().orElseThrow();
             var channel = event.getInteraction().getChannelId();
             return this.executorFactory.executorFromMember(member)
-                    .flatMap(executor -> this.staticViewService.registerReplyForStaticTeamView(new StaticTeamViewTeamCommand(executor, guildId, channel)))
-                    .then(event.reply("Erfolgreich angelegt").withEphemeral(true));
+                    .flatMap(executor -> {
+                        var onoff = getNonRequiredOption(event, "switch", ApplicationCommandInteractionOptionValue::asBoolean).orElse(true);
+                        return this.staticViewService.staticCommandHandler(new StaticTeamViewTeamCommand(executor, guildId, channel, onoff));
+                    })
+                    .then(event.reply("Hat funktioniert!").withEphemeral(true));
         };
     }
 }

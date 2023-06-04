@@ -34,12 +34,21 @@ public class StaticViewService {
         this.updatedGuilds = new HashSet<>();
     }
 
-    public Mono<Void> registerReplyForStaticTeamView(StaticTeamViewTeamCommand command) {
+    public Mono<Void> staticCommandHandler(StaticTeamViewTeamCommand command){
         if (!command.runner().isAdmin()) {
             return Mono.error(new RuntimeException("Keine Berechtigung!"));
         }
-        StaticTeamView view = new StaticTeamView(command);
-        return this.repository.save(view);
+        if(command.on()){
+            return this.registerReplyForStaticTeamView(command);
+        }
+        return this.removeStaticTeamView(command);
+    }
+    public Mono<Void> registerReplyForStaticTeamView(StaticTeamViewTeamCommand command) {
+        return this.repository.save(new StaticTeamView(command));
+    }
+
+    public Mono<Void> removeStaticTeamView(StaticTeamViewTeamCommand command){
+        return this.repository.delete(command.guild().asString()+command.channel().asString());
     }
 
     @EventListener
