@@ -36,7 +36,7 @@ public class DCAddTeammitgliedCommand extends AbstractRegistrableIdentifiedComma
     public ApplicationCommandRequest getDiscordCommandRequest() {
         return ApplicationCommandRequest.builder()
                 .name("addmember")
-                .description("Fügt ein Teammitglied einem Team hinzu")
+                .description("Fügt ein Teammitglied einem Team hinzu oder aktualisiert es")
                 .addOption(ApplicationCommandOptionData.builder()
                         .type(ApplicationCommandOption.Type.STRING.getValue())
                         .description("Name des Teams")
