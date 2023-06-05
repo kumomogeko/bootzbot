@@ -4,7 +4,7 @@ import bootz.gaming.bootzbot.domain.sharedKernel.Admin
 import bootz.gaming.bootzbot.domain.teams.teamlinks.AddTeamLinkTeamCommand
 import bootz.gaming.bootzbot.domain.teams.teamlinks.RemoveTeamLinkTeamCommand
 import bootz.gaming.bootzbot.domain.teams.teamlinks.Teamlink
-import bootz.gaming.bootzbot.domain.teams.teammitglied.AddTeammitgliedTeamCommand
+import bootz.gaming.bootzbot.domain.teams.teammitglied.AddUpdateTeammitgliedTeamCommand
 import bootz.gaming.bootzbot.domain.teams.teammitglied.RemoveTeammitgliedTeamCommand
 import bootz.gaming.bootzbot.domain.teams.teammitglied.Teammitglied
 import discord4j.common.util.Snowflake
@@ -49,7 +49,7 @@ class TeamTest extends Specification {
         def team = new Team(guildId, teamname, [], [:], null)
 
         when:
-        team.addTeammitglied(new AddTeammitgliedTeamCommand(admin, teamId, teammitglied))
+        team.addOrUpdateTeammitglied(new AddUpdateTeammitgliedTeamCommand(admin, teamId, teammitglied))
         then:
         team.getMembers().contains(teammitglied)
     }
@@ -61,7 +61,7 @@ class TeamTest extends Specification {
         def team = new Team(guildId, teamname, [teammitglied], [:], null)
 
         when:
-        team.addTeammitglied(new AddTeammitgliedTeamCommand(admin, teamId, teammitglied))
+        team.addOrUpdateTeammitglied(new AddUpdateTeammitgliedTeamCommand(admin, teamId, teammitglied))
         then:
         thrown(RuntimeException)
     }

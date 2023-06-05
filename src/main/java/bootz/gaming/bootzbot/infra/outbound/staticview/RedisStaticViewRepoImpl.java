@@ -3,6 +3,7 @@ package bootz.gaming.bootzbot.infra.outbound.staticview;
 import bootz.gaming.bootzbot.domain.discord.StaticTeamView;
 import bootz.gaming.bootzbot.domain.discord.StaticViewRepository;
 import discord4j.common.util.Snowflake;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.core.ReactiveRedisOperations;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -10,6 +11,7 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 @Component
+@Profile("redis")
 public class RedisStaticViewRepoImpl implements StaticViewRepository {
 
     private final ReactiveRedisOperations<String, StaticViewDBO> redisOperations;

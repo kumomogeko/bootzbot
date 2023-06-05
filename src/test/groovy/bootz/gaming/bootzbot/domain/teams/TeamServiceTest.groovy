@@ -1,6 +1,7 @@
 package bootz.gaming.bootzbot.domain.teams
 
 import bootz.gaming.bootzbot.domain.sharedKernel.Admin
+import bootz.gaming.bootzbot.domain.sharedKernel.DomainEventPublisher
 import bootz.gaming.bootzbot.domain.teams.teamlinks.Teamlink
 import discord4j.common.util.Snowflake
 import reactor.core.publisher.Mono
@@ -10,6 +11,7 @@ class TeamServiceTest extends Specification {
 
     def teamRepository = Mock(TeamRepository)
     def teamFactory = Mock(TeamFactory)
+    def publisher = Mock(DomainEventPublisher)
     def admin = new Admin(Snowflake.of(1l))
 
     def "Will get Link list from specified Team"() {

@@ -1,6 +1,8 @@
-package bootz.gaming.bootzbot.application.teams.commands;
+package bootz.gaming.bootzbot.application.discord.teammanagement.commands.teams;
 
-import bootz.gaming.bootzbot.domain.sharedKernel.ExecutorFactory;
+import bootz.gaming.bootzbot.application.discord.teammanagement.commands.AbstractRegistrableIdentifiedCommand;
+import bootz.gaming.bootzbot.domain.sharedKernel.Executor;
+import bootz.gaming.bootzbot.application.discord.teammanagement.commands.ExecutorFactory;
 import bootz.gaming.bootzbot.domain.teams.TeamId;
 import bootz.gaming.bootzbot.domain.teams.TeamReadTeamCommand;
 import bootz.gaming.bootzbot.domain.teams.TeamService;
@@ -19,18 +21,16 @@ import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 @Component
-public class DCListTeamMembersCommand extends AbstractRegistrableCommand {
+public class DCListTeamMembersCommand extends AbstractRegistrableIdentifiedCommand {
 
     private final TeamService teamService;
-    private final ExecutorFactory executorFactory;
     private final String teamnameOption = "teamname";
 
     public DCListTeamMembersCommand(TeamService teamService, ExecutorFactory executorFactory) {
+        super(executorFactory);
         this.teamService = teamService;
-        this.executorFactory = executorFactory;
     }
 
     @Override
@@ -47,23 +47,6 @@ public class DCListTeamMembersCommand extends AbstractRegistrableCommand {
                 .build();
     }
 
-    @Override
-    public Function<ChatInputInteractionEvent, Mono<Void>> getCommandHandler() {
-        return event -> {
-            var guildId = event.getInteraction().getGuildId().orElseThrow();
-            var member = event.getInteraction().getMember().orElseThrow();
-            return this.executorFactory.executorFromMember(member).flatMap(executor -> {
-                var teamname = getOption(event, teamnameOption, ApplicationCommandInteractionOptionValue::asString);
-                var command = new TeamReadTeamCommand(executor, new TeamId(guildId.asLong(), teamname));
-
-                return teamService.listMembers(command).flatMap(members -> {
-                    var replySpec = InteractionApplicationCommandCallbackSpec.builder()
-                            .addEmbed(createMemberSpec(teamname, members)).build();
-                    return event.reply(replySpec);
-                });
-            });
-        };
-    }
 
     private EmbedCreateSpec createMemberSpec(String teamname, List<Teammitglied> members) {
         var memberFieldList = new ArrayList<EmbedCreateFields.Field>();
@@ -79,5 +62,18 @@ public class DCListTeamMembersCommand extends AbstractRegistrableCommand {
                 .addAllFields(memberFieldList)
                 .footer("With love from Bootzbot", "https://bootz-gaming.com/wp-content/uploads/2023/04/Element-3.png")
                 .build();
+    }
+
+    @Override
+    public Mono<Void> innerCommandHandler(Executor runner, ChatInputInteractionEvent event) {
+        var guildId = event.getInteraction().getGuildId().orElseThrow();
+        var teamname = getOption(event, teamnameOption, ApplicationCommandInteractionOptionValue::asString);
+        var command = new TeamReadTeamCommand(runner, new TeamId(guildId.asLong(), teamname));
+
+        return teamService.listMembers(command).flatMap(members -> {
+            var replySpec = InteractionApplicationCommandCallbackSpec.builder()
+                    .addEmbed(createMemberSpec(teamname, members)).build();
+            return event.reply(replySpec);
+        });
     }
 }

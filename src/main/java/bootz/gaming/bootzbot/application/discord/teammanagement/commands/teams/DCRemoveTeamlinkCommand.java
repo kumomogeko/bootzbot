@@ -1,6 +1,8 @@
-package bootz.gaming.bootzbot.application.teams.commands;
+package bootz.gaming.bootzbot.application.discord.teammanagement.commands.teams;
 
-import bootz.gaming.bootzbot.domain.sharedKernel.ExecutorFactory;
+import bootz.gaming.bootzbot.application.discord.teammanagement.commands.AbstractRegistrableIdentifiedCommand;
+import bootz.gaming.bootzbot.domain.sharedKernel.Executor;
+import bootz.gaming.bootzbot.application.discord.teammanagement.commands.ExecutorFactory;
 import bootz.gaming.bootzbot.domain.teams.TeamId;
 import bootz.gaming.bootzbot.domain.teams.TeamService;
 import bootz.gaming.bootzbot.domain.teams.teamlinks.RemoveTeamLinkTeamCommand;
@@ -12,19 +14,16 @@ import discord4j.discordjson.json.ApplicationCommandRequest;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-import java.util.function.Function;
-
 @Component
-public class DCRemoveTeamlinkCommand extends AbstractRegistrableCommand {
+public class DCRemoveTeamlinkCommand extends AbstractRegistrableIdentifiedCommand {
 
     private final TeamService teamService;
-    private final ExecutorFactory executorFactory;
     private final String teamnameOption = "teamname";
     private final String linkidOption = "linkid";
 
     public DCRemoveTeamlinkCommand(TeamService teamService, ExecutorFactory executorFactory) {
+        super(executorFactory);
         this.teamService = teamService;
-        this.executorFactory = executorFactory;
     }
 
     @Override
@@ -47,18 +46,14 @@ public class DCRemoveTeamlinkCommand extends AbstractRegistrableCommand {
                 .build();
     }
 
-    @Override
-    public Function<ChatInputInteractionEvent, Mono<Void>> getCommandHandler() {
-        return event -> {
-            var guildId = event.getInteraction().getGuildId().orElseThrow();
-            var member = event.getInteraction().getMember().orElseThrow();
-            return this.executorFactory.executorFromMember(member).flatMap(executor -> {
-                var teamname = getOption(event, teamnameOption, ApplicationCommandInteractionOptionValue::asString);
-                var linkid = getOption(event, linkidOption, ApplicationCommandInteractionOptionValue::asString);
 
-                var command = new RemoveTeamLinkTeamCommand(executor, new TeamId(guildId.asLong(), teamname), linkid);
-                return teamService.removeTeamlink(command).then(event.reply("Link entfernt"));
-            });
-        };
+    @Override
+    public Mono<Void> innerCommandHandler(Executor runner, ChatInputInteractionEvent event) {
+        var guildId = event.getInteraction().getGuildId().orElseThrow();
+        var teamname = getOption(event, teamnameOption, ApplicationCommandInteractionOptionValue::asString);
+        var linkid = getOption(event, linkidOption, ApplicationCommandInteractionOptionValue::asString);
+
+        var command = new RemoveTeamLinkTeamCommand(runner, new TeamId(guildId.asLong(), teamname), linkid);
+        return teamService.removeTeamlink(command).then(event.reply("Link entfernt"));
     }
 }

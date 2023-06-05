@@ -4,6 +4,7 @@ import bootz.gaming.bootzbot.domain.sharedKernel.Executor;
 import bootz.gaming.bootzbot.util.Entity;
 import reactor.util.annotation.NonNull;
 
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -48,5 +49,18 @@ public class Teammitglied implements Executor {
 
     public Set<Rolle> getRollen() {
         return this.rollen;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Teammitglied that = (Teammitglied) o;
+        return discordAccount.equals(that.discordAccount);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(discordAccount);
     }
 }

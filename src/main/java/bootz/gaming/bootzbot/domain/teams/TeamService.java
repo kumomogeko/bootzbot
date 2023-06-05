@@ -6,7 +6,7 @@ import bootz.gaming.bootzbot.domain.sharedKernel.TeamUpdatedEvent;
 import bootz.gaming.bootzbot.domain.teams.teamlinks.AddTeamLinkTeamCommand;
 import bootz.gaming.bootzbot.domain.teams.teamlinks.RemoveTeamLinkTeamCommand;
 import bootz.gaming.bootzbot.domain.teams.teamlinks.Teamlink;
-import bootz.gaming.bootzbot.domain.teams.teammitglied.AddTeammitgliedTeamCommand;
+import bootz.gaming.bootzbot.domain.teams.teammitglied.AddUpdateTeammitgliedTeamCommand;
 import bootz.gaming.bootzbot.domain.teams.teammitglied.RemoveTeammitgliedTeamCommand;
 import bootz.gaming.bootzbot.domain.teams.teammitglied.Teammitglied;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ public class TeamService {
         this.publisher = publisher;
     }
 
-    public Mono<Void> addTeam(AddTeamTeamCommand command) {
+    public Mono<Void> addTeam(AddTeamCommand command) {
         if (notAllowedToExecuteTeamAdminAction(command.runner())) {
             return Mono.error(new RuntimeException("Keine Berechtigung!"));
         }
@@ -42,7 +42,7 @@ public class TeamService {
                 .doOnSuccess(unused -> this.publisher.publishEvent(new TeamUpdatedEvent(command.teamId())));
     }
 
-    public Mono<Void> removeTeam(RemoveTeamTeamCommand command) {
+    public Mono<Void> removeTeam(RemoveTeamCommand command) {
         if (notAllowedToExecuteTeamAdminAction(command.runner())) {
             return Mono.error(new RuntimeException("Keine Berechtigung!"));
         }
@@ -50,12 +50,19 @@ public class TeamService {
                 .doOnSuccess(unused -> this.publisher.publishEvent(new TeamUpdatedEvent(command.teamId())));
     }
 
+    public Mono<Void> renameTeam(RenameTeamCommand command){
+        return this.repository.getTeamByTeamId(new TeamId(command.teamId().getGuild(), command.newName()))
+                .map(team -> {throw new RuntimeException("Teamname ist nicht frei!");})
+                .then()
+                .then(this.executeTeamActionFromRepoAndSave(Team::renameTeam, command).then(this.repository.delete(command.teamId())));
+    }
+
     public Mono<List<Team>> getTeams() {
         return this.repository.getTeams();
     }
 
-    public Mono<Void> addTeammitglied(AddTeammitgliedTeamCommand command) {
-        return this.executeTeamActionFromRepoAndSave(Team::addTeammitglied, command);
+    public Mono<Void> addOrUpdateTeammitglied(AddUpdateTeammitgliedTeamCommand command) {
+        return this.executeTeamActionFromRepoAndSave(Team::addOrUpdateTeammitglied, command);
     }
 
 

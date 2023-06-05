@@ -1,4 +1,4 @@
-package bootz.gaming.bootzbot.domain.sharedKernel;
+package bootz.gaming.bootzbot.application.discord.teammanagement.commands;
 
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
 import discord4j.discordjson.json.ApplicationCommandRequest;

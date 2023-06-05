@@ -1,6 +1,5 @@
-package bootz.gaming.bootzbot.application;
+package bootz.gaming.bootzbot.application.discord.teammanagement.commands;
 
-import bootz.gaming.bootzbot.domain.sharedKernel.RegistrableCommand;
 import bootz.gaming.bootzbot.infra.inbound.DiscordBotAccessProvision;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
@@ -50,12 +49,10 @@ public class DiscordEventRegistrar {
 
     public void reactCommands() {
         client
-                .on(ChatInputInteractionEvent.class, event -> {
-                    return this.commandList.get(event.getCommandName())
-                            .getCommandHandler()
-                            .apply(event)
-                            .onErrorResume(throwable -> event.reply(String.format("Fehler: %s", throwable.getMessage())));
-                })
+                .on(ChatInputInteractionEvent.class, event -> this.commandList.get(event.getCommandName())
+                        .getCommandHandler()
+                        .apply(event)
+                        .onErrorResume(throwable -> event.reply(String.format("Fehler: %s", throwable.getMessage()))))
                 .subscribe();
     }
 }

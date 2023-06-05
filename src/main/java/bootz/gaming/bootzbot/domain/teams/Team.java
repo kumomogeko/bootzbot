@@ -4,7 +4,7 @@ import bootz.gaming.bootzbot.domain.sharedKernel.Executor;
 import bootz.gaming.bootzbot.domain.teams.teamlinks.AddTeamLinkTeamCommand;
 import bootz.gaming.bootzbot.domain.teams.teamlinks.RemoveTeamLinkTeamCommand;
 import bootz.gaming.bootzbot.domain.teams.teamlinks.Teamlink;
-import bootz.gaming.bootzbot.domain.teams.teammitglied.AddTeammitgliedTeamCommand;
+import bootz.gaming.bootzbot.domain.teams.teammitglied.AddUpdateTeammitgliedTeamCommand;
 import bootz.gaming.bootzbot.domain.teams.teammitglied.RemoveTeammitgliedTeamCommand;
 import bootz.gaming.bootzbot.domain.teams.teammitglied.Teammitglied;
 import bootz.gaming.bootzbot.util.AggregateRoot;
@@ -73,12 +73,12 @@ public class Team {
         this.links.remove(command.linkId());
     }
 
-    public void addTeammitglied(AddTeammitgliedTeamCommand command) {
+    public void addOrUpdateTeammitglied(AddUpdateTeammitgliedTeamCommand command) {
         if (notAllowedToExecuteTeamAction(command.runner())) {
             throw new RuntimeException("Keine Berechtigung!");
         }
         if (isMember(command.teammitglied())) {
-            throw new RuntimeException("Ist schon Teammitglied!");
+            this.members.remove(command.teammitglied());
         }
         this.members.add(command.teammitglied());
     }
@@ -93,6 +93,13 @@ public class Team {
         this.members.removeIf(teammitglied -> command.teammitglied().isEqual(teammitglied));
     }
 
+    public void renameTeam(RenameTeamCommand command){
+        if (notAllowedToExecuteTeamAction(command.runner())) {
+            throw new RuntimeException("Keine Berechtigung!");
+        }
+        this.teamname = command.newName();
+    }
+
     private boolean isMember(Teammitglied teammitglied) {
         return this.members.stream()
                 .anyMatch(member -> member.isEqual(teammitglied));
@@ -105,6 +112,7 @@ public class Team {
     private boolean isCaptain(Teammitglied teammitglied) {
         return this.getTeammitglied(teammitglied).map(Teammitglied::isCaptain).orElse(false);
     }
+
 
     private boolean notAllowedToExecuteTeamAction(Executor executor) {
         return !executor.isAdmin() &&
@@ -141,4 +149,6 @@ public class Team {
     public List<Teammitglied> getCaptains() {
         return this.members.stream().filter(Teammitglied::isCaptain).collect(Collectors.toList());
     }
+
+
 }

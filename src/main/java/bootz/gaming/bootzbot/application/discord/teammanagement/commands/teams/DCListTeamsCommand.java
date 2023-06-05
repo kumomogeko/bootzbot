@@ -1,7 +1,7 @@
-package bootz.gaming.bootzbot.application.teams.commands;
+package bootz.gaming.bootzbot.application.discord.teammanagement.commands.teams;
 
-import bootz.gaming.bootzbot.application.discord.TeamEmbedViewService;
-import bootz.gaming.bootzbot.domain.sharedKernel.RegistrableCommand;
+import bootz.gaming.bootzbot.application.discord.teammanagement.TeamEmbedViewService;
+import bootz.gaming.bootzbot.application.discord.teammanagement.commands.RegistrableCommand;
 import bootz.gaming.bootzbot.domain.teams.TeamService;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
 import discord4j.core.spec.InteractionApplicationCommandCallbackSpec;

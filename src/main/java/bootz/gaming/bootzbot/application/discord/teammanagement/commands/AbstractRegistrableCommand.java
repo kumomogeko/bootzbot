@@ -1,6 +1,5 @@
-package bootz.gaming.bootzbot.application.teams.commands;
+package bootz.gaming.bootzbot.application.discord.teammanagement.commands;
 
-import bootz.gaming.bootzbot.domain.sharedKernel.RegistrableCommand;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
 import discord4j.core.object.command.ApplicationCommandInteractionOption;
 import discord4j.core.object.command.ApplicationCommandInteractionOptionValue;

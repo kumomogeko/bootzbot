@@ -1,4 +1,4 @@
-package bootz.gaming.bootzbot.application.discord;
+package bootz.gaming.bootzbot.application.discord.teammanagement;
 
 import bootz.gaming.bootzbot.domain.teams.Team;
 import bootz.gaming.bootzbot.domain.teams.teammitglied.Teammitglied;

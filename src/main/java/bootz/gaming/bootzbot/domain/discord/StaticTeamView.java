@@ -1,6 +1,6 @@
 package bootz.gaming.bootzbot.domain.discord;
 
-import bootz.gaming.bootzbot.application.discord.TeamEmbedViewService;
+import bootz.gaming.bootzbot.application.discord.teammanagement.TeamEmbedViewService;
 import bootz.gaming.bootzbot.domain.teams.TeamService;
 import bootz.gaming.bootzbot.util.AggregateRoot;
 import discord4j.common.util.Snowflake;

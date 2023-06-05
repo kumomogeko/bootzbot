@@ -1,11 +1,10 @@
-package bootz.gaming.bootzbot.application.discord.commands.admin;
+package bootz.gaming.bootzbot.application.discord.teammanagement.commands.admin;
 
-import bootz.gaming.bootzbot.application.teams.commands.AbstractRegistrableCommand;
+import bootz.gaming.bootzbot.application.discord.teammanagement.commands.AbstractRegistrableAdminCommand;
 import bootz.gaming.bootzbot.domain.discord.StaticTeamViewTeamCommand;
 import bootz.gaming.bootzbot.domain.discord.StaticViewService;
-import bootz.gaming.bootzbot.domain.sharedKernel.ExecutorFactory;
-import bootz.gaming.bootzbot.domain.sharedKernel.RegistrableCommand;
-import bootz.gaming.bootzbot.domain.teams.teammitglied.Rolle;
+import bootz.gaming.bootzbot.domain.sharedKernel.Executor;
+import bootz.gaming.bootzbot.application.discord.teammanagement.commands.ExecutorFactory;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
 import discord4j.core.object.command.ApplicationCommandInteractionOptionValue;
 import discord4j.core.object.command.ApplicationCommandOption;
@@ -14,17 +13,13 @@ import discord4j.discordjson.json.ApplicationCommandRequest;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-import java.util.Set;
-import java.util.function.Function;
-
 @Component
-public class DCStaticTeamViewCommand extends AbstractRegistrableCommand {
+public class DCStaticTeamViewCommand extends AbstractRegistrableAdminCommand {
 
-    private final ExecutorFactory executorFactory;
     private final StaticViewService staticViewService;
 
     public DCStaticTeamViewCommand(ExecutorFactory executorFactory, StaticViewService staticViewService) {
-        this.executorFactory = executorFactory;
+        super(executorFactory);
         this.staticViewService = staticViewService;
     }
 
@@ -43,17 +38,11 @@ public class DCStaticTeamViewCommand extends AbstractRegistrableCommand {
     }
 
     @Override
-    public Function<ChatInputInteractionEvent, Mono<Void>> getCommandHandler() {
-        return event -> {
-            var guildId = event.getInteraction().getGuildId().orElseThrow();
-            var member = event.getInteraction().getMember().orElseThrow();
-            var channel = event.getInteraction().getChannelId();
-            return this.executorFactory.executorFromMember(member)
-                    .flatMap(executor -> {
-                        var onoff = getNonRequiredOption(event, "switch", ApplicationCommandInteractionOptionValue::asBoolean).orElse(true);
-                        return this.staticViewService.staticCommandHandler(new StaticTeamViewTeamCommand(executor, guildId, channel, onoff));
-                    })
-                    .then(event.reply("Hat funktioniert!").withEphemeral(true));
-        };
+    public Mono<Void> innerCommandHandler(Executor runner, ChatInputInteractionEvent event) {
+        var guildId = event.getInteraction().getGuildId().orElseThrow();
+        var channel = event.getInteraction().getChannelId();
+        var onoff = getNonRequiredOption(event, "switch", ApplicationCommandInteractionOptionValue::asBoolean).orElse(true);
+        return this.staticViewService.staticCommandHandler(new StaticTeamViewTeamCommand(runner, guildId, channel, onoff))
+                .then(event.reply("Hat funktioniert!").withEphemeral(true));
     }
 }

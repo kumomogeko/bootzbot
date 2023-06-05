@@ -1,7 +1,8 @@
-package bootz.gaming.bootzbot.application.teams.commands;
+package bootz.gaming.bootzbot.application.discord.teammanagement.commands.teams;
 
-import bootz.gaming.bootzbot.domain.sharedKernel.ExecutorFactory;
-import bootz.gaming.bootzbot.domain.sharedKernel.RegistrableCommand;
+import bootz.gaming.bootzbot.application.discord.teammanagement.commands.AbstractRegistrableIdentifiedCommand;
+import bootz.gaming.bootzbot.domain.sharedKernel.Executor;
+import bootz.gaming.bootzbot.application.discord.teammanagement.commands.ExecutorFactory;
 import bootz.gaming.bootzbot.domain.teams.TeamId;
 import bootz.gaming.bootzbot.domain.teams.TeamReadTeamCommand;
 import bootz.gaming.bootzbot.domain.teams.TeamService;
@@ -14,17 +15,14 @@ import discord4j.discordjson.json.ApplicationCommandRequest;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-import java.util.function.Function;
-
 @Component
-public class DCGetOpGGCommand implements RegistrableCommand {
+public class DCGetOpGGCommand extends AbstractRegistrableIdentifiedCommand {
 
     private final TeamService teamService;
-    private final ExecutorFactory executorFactory;
 
     public DCGetOpGGCommand(TeamService teamService, ExecutorFactory executorFactory) {
+        super(executorFactory);
         this.teamService = teamService;
-        this.executorFactory = executorFactory;
     }
 
     @Override
@@ -41,20 +39,15 @@ public class DCGetOpGGCommand implements RegistrableCommand {
                 .build();
     }
 
+
     @Override
-    public Function<ChatInputInteractionEvent, Mono<Void>> getCommandHandler() {
-        return event -> {
-            var guildId = event.getInteraction().getGuildId().orElseThrow();
-            var member = event.getInteraction().getMember().orElseThrow();
-            return executorFactory.executorFromMember(member)
-                    .flatMap(executor -> {
-                        var teamName = event.getOption("name")
-                                .flatMap(ApplicationCommandInteractionOption::getValue)
-                                .map(ApplicationCommandInteractionOptionValue::asString)
-                                .orElseThrow();
-                        return teamService.getOpgg(new TeamReadTeamCommand(executor, new TeamId(guildId.asLong(), teamName)));
-                    })
-                    .flatMap(event::reply);
-        };
+    public Mono<Void> innerCommandHandler(Executor runner, ChatInputInteractionEvent event) {
+        var guildId = event.getInteraction().getGuildId().orElseThrow();
+        var teamName = event.getOption("name")
+                .flatMap(ApplicationCommandInteractionOption::getValue)
+                .map(ApplicationCommandInteractionOptionValue::asString)
+                .orElseThrow();
+        return teamService.getOpgg(new TeamReadTeamCommand(runner, new TeamId(guildId.asLong(), teamName)))
+                .flatMap(event::reply);
     }
 }

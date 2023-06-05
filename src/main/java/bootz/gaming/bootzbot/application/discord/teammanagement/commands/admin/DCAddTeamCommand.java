@@ -1,8 +1,9 @@
-package bootz.gaming.bootzbot.application.teams.commands.admin;
+package bootz.gaming.bootzbot.application.discord.teammanagement.commands.admin;
 
-import bootz.gaming.bootzbot.application.teams.commands.AbstractRegistrableCommand;
-import bootz.gaming.bootzbot.domain.sharedKernel.ExecutorFactory;
-import bootz.gaming.bootzbot.domain.teams.AddTeamTeamCommand;
+import bootz.gaming.bootzbot.application.discord.teammanagement.commands.AbstractRegistrableAdminCommand;
+import bootz.gaming.bootzbot.domain.sharedKernel.Executor;
+import bootz.gaming.bootzbot.application.discord.teammanagement.commands.ExecutorFactory;
+import bootz.gaming.bootzbot.domain.teams.AddTeamCommand;
 import bootz.gaming.bootzbot.domain.teams.TeamId;
 import bootz.gaming.bootzbot.domain.teams.TeamService;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
@@ -13,17 +14,14 @@ import discord4j.discordjson.json.ApplicationCommandRequest;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-import java.util.function.Function;
-
 @Component
-public class DCAddTeamCommand extends AbstractRegistrableCommand {
+public class DCAddTeamCommand extends AbstractRegistrableAdminCommand {
 
     private final TeamService teamService;
-    private final ExecutorFactory executorFactory;
 
     public DCAddTeamCommand(TeamService teamService, ExecutorFactory executorFactory) {
+        super(executorFactory);
         this.teamService = teamService;
-        this.executorFactory = executorFactory;
     }
 
     @Override
@@ -41,15 +39,10 @@ public class DCAddTeamCommand extends AbstractRegistrableCommand {
     }
 
     @Override
-    public Function<ChatInputInteractionEvent, Mono<Void>> getCommandHandler() {
-        return event -> {
-            var guildId = event.getInteraction().getGuildId().orElseThrow();
-            var member = event.getInteraction().getMember().orElseThrow();
-            return this.executorFactory.executorFromMember(member).flatMap(executor -> {
-                var teamName = this.getOption(event, "name", ApplicationCommandInteractionOptionValue::asString);
-                var command = new AddTeamTeamCommand(executor, new TeamId(guildId.asLong(), teamName));
-                return teamService.addTeam(command).then(event.reply(String.format("Team hinzugefügt: %s", teamName)));
-            });
-        };
+    public Mono<Void> innerCommandHandler(Executor executor, ChatInputInteractionEvent event) {
+        var guildId = event.getInteraction().getGuildId().orElseThrow();
+        var teamName = this.getOption(event, "name", ApplicationCommandInteractionOptionValue::asString);
+        var command = new AddTeamCommand(executor, new TeamId(guildId.asLong(), teamName));
+        return teamService.addTeam(command).then(event.reply(String.format("Team hinzugefügt: %s", teamName)));
     }
 }
