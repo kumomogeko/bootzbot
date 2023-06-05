@@ -3,6 +3,7 @@ package bootz.gaming.bootzbot.application.discord.teammanagement.commands;
 import bootz.gaming.bootzbot.infra.inbound.DiscordBotAccessProvision;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
+import discord4j.discordjson.json.ApplicationCommandData;
 import discord4j.discordjson.json.ApplicationCommandRequest;
 import discord4j.rest.RestClient;
 import discord4j.rest.service.ApplicationService;
@@ -30,13 +31,14 @@ public class DiscordEventRegistrar {
 
     @EventListener(ApplicationReadyEvent.class)
     public void doAllAfterStartup() {
-        this.registerCommands();
+        var appId = Long.parseLong(System.getenv("APP_ID"));
+        var client = this.client.getRestClient();
+        this.registerCommands(appId, client);
+        this.removeOldCommands(appId, client);
         this.reactCommands();
     }
 
-    public void registerCommands() {
-        RestClient restClient = client.getRestClient();
-        var appId = Long.parseLong(System.getenv("APP_ID"));
+    public void registerCommands(long appId, RestClient restClient) {
         //var guildId = 1108533746627530802L;
         ApplicationService applicationService = restClient.getApplicationService();
         for (var command : commandRegistrarList) {
@@ -45,6 +47,19 @@ public class DiscordEventRegistrar {
             commandList.put(discordCommandRequest.name(), command);
             System.out.printf("Command registered: %s%n", discordCommandRequest.name());
         }
+    }
+
+    public void removeOldCommands(long appId, RestClient restClient) {
+        //var guildId = 1108533746627530802L;
+        ApplicationService applicationService = restClient.getApplicationService();
+        applicationService.getGlobalApplicationCommands(appId)
+                .filter(applicationCommandData -> !commandList.containsKey(applicationCommandData.name()))
+                .doOnNext(applicationCommandData -> {
+                    System.out.println("Removing old command: " + applicationCommandData.name());
+                })
+                .map(ApplicationCommandData::id)
+                .flatMap(id -> applicationService.deleteGlobalApplicationCommand(appId, id.asLong()))
+                .subscribe();
     }
 
     public void reactCommands() {
