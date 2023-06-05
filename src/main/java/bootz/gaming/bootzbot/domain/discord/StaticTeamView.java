@@ -6,6 +6,7 @@ import bootz.gaming.bootzbot.util.AggregateRoot;
 import discord4j.common.util.Snowflake;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.object.entity.channel.GuildMessageChannel;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Objects;
@@ -77,7 +78,8 @@ public final class StaticTeamView {
                 .flatMap(objects -> {
                     var channel = objects.getT1();
                     var teamsList = objects.getT2();
-                    return channel.createMessage(embedViewService.createTeamSpec(teamsList)).then();
+                    return Flux.fromIterable(embedViewService.createTeamSpec(teamsList))
+                            .flatMap(channel::createMessage).then();
                 });
     }
 

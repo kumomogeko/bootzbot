@@ -4,7 +4,6 @@ import bootz.gaming.bootzbot.application.discord.teammanagement.TeamEmbedViewSer
 import bootz.gaming.bootzbot.application.discord.teammanagement.commands.RegistrableCommand;
 import bootz.gaming.bootzbot.domain.teams.TeamService;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
-import discord4j.core.spec.InteractionApplicationCommandCallbackSpec;
 import discord4j.discordjson.json.ApplicationCommandRequest;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -33,11 +32,7 @@ public class DCListTeamsCommand implements RegistrableCommand {
 
     @Override
     public Function<ChatInputInteractionEvent, Mono<Void>> getCommandHandler() {
-        return event -> teamService.getTeams().flatMap(teams -> {
-            var replySpec = InteractionApplicationCommandCallbackSpec.builder()
-                    .addEmbed(this.teamViewService.createTeamSpec(teams)).build();
-            return event.reply(replySpec);
-        });
+        return event -> teamService.getTeams().flatMap(teams -> this.teamViewService.postEventTeamSpec(event, this.teamViewService.createTeamSpec(teams)));
     }
 
 

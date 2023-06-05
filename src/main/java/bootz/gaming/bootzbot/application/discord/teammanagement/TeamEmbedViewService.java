@@ -2,10 +2,14 @@ package bootz.gaming.bootzbot.application.discord.teammanagement;
 
 import bootz.gaming.bootzbot.domain.teams.Team;
 import bootz.gaming.bootzbot.domain.teams.teammitglied.Teammitglied;
+import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
+import discord4j.core.spec.InteractionApplicationCommandCallbackSpec;
+import discord4j.core.spec.InteractionFollowupCreateSpec;
 import discord4j.rest.util.Color;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -16,7 +20,8 @@ import java.util.List;
 @Service
 public class TeamEmbedViewService {
 
-    public EmbedCreateSpec createTeamSpec(List<Team> teams) {
+    public List<EmbedCreateSpec> createTeamSpec(List<Team> teams) {
+        var embedList = new ArrayList<EmbedCreateSpec>();
         var linkFieldList = new ArrayList<EmbedCreateFields.Field>();
         for (var team : teams) {
             linkFieldList.add(EmbedCreateFields.Field.of("Team", team.getTeamname(), false));
@@ -24,12 +29,41 @@ public class TeamEmbedViewService {
             linkFieldList.add(EmbedCreateFields.Field.of("Captain(s)", membersToMentions(team.getCaptains()), true));
         }
 
-        return EmbedCreateSpec.builder().color(Color.of(0x181d29))
-                .title("Die Teams")
-                .description("Inklusive op.gg")
-                .addAllFields(linkFieldList)
-                .footer("With 💌 from Bootzbot @" + LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)), "https://bootz-gaming.com/wp-content/uploads/2023/04/Element-3.png")
-                .build();
+        var listOfLists = new ArrayList<List<EmbedCreateFields.Field>>();
+        //24 because an embded can take up to 25 fields and a team compartment is 3 fields, max fit is 24 field for a clean view
+        for(int i =0; i<linkFieldList.size();i+=24){
+            listOfLists.add(linkFieldList.subList(i,Math.min(i+24, linkFieldList.size())));
+        }
+
+        for(var sublist: listOfLists) {
+            embedList.add(EmbedCreateSpec.builder().color(Color.of(0x181d29))
+                    .title("Die Teams")
+                    .description("Inklusive op.gg")
+                    .addAllFields(sublist)
+                    .footer("With 💌 from Bootzbot @" + LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)), "https://bootz-gaming.com/wp-content/uploads/2023/04/Element-3.png")
+                    .build());
+        }
+        return embedList;
+    }
+
+    //Fixme Please clean me up!
+    public Mono<Void> postEventTeamSpec(ChatInputInteractionEvent event, List<EmbedCreateSpec> specs){
+        if(specs.size()==0){
+            return Mono.empty();
+        }
+        var replySpec = InteractionApplicationCommandCallbackSpec.builder()
+                .addEmbed(specs.get(0)).build();
+
+        var chainOfResponses = event.reply(replySpec);
+        if(specs.size()==1){
+            return chainOfResponses;
+        }
+        for(var spec: specs.subList(1,specs.size())){
+            var tempreplySpec = InteractionFollowupCreateSpec.builder()
+                    .addEmbed(spec).build();
+            chainOfResponses = chainOfResponses.then(event.createFollowup(tempreplySpec).then());
+        }
+        return chainOfResponses;
     }
 
     private String membersToMentions(List<Teammitglied> captains) {
