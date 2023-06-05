@@ -11,8 +11,10 @@ import discord4j.core.object.command.ApplicationCommandInteractionOptionValue;
 import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.discordjson.json.ApplicationCommandOptionData;
 import discord4j.discordjson.json.ApplicationCommandRequest;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+@Component
 public class DCRenameTeamCommand extends AbstractRegistrableIdentifiedCommand {
 
     private final TeamService teamService;
@@ -48,6 +50,7 @@ public class DCRenameTeamCommand extends AbstractRegistrableIdentifiedCommand {
         var currentTeamname = getOption(event, "currentname", ApplicationCommandInteractionOptionValue::asString);
         var wantedTeamname = getOption(event, "wantedname", ApplicationCommandInteractionOptionValue::asString);
 
-        return this.teamService.renameTeam(new RenameTeamCommand(runner, new TeamId(guildId.asLong(),currentTeamname),wantedTeamname));
+        return this.teamService.renameTeam(new RenameTeamCommand(runner, new TeamId(guildId.asLong(),currentTeamname),wantedTeamname))
+                .then(event.reply("Team umbenannt!"));
     }
 }
