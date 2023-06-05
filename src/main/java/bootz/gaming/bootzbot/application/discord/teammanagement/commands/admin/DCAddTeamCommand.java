@@ -2,7 +2,7 @@ package bootz.gaming.bootzbot.application.discord.teammanagement.commands.admin;
 
 import bootz.gaming.bootzbot.application.discord.teammanagement.commands.AbstractRegistrableAdminCommand;
 import bootz.gaming.bootzbot.domain.sharedKernel.Executor;
-import bootz.gaming.bootzbot.application.discord.teammanagement.commands.ExecutorFactory;
+import bootz.gaming.bootzbot.application.discord.teammanagement.commands.id.ExecutorFactory;
 import bootz.gaming.bootzbot.domain.teams.AddTeamCommand;
 import bootz.gaming.bootzbot.domain.teams.TeamId;
 import bootz.gaming.bootzbot.domain.teams.TeamService;

@@ -4,7 +4,7 @@ import bootz.gaming.bootzbot.application.discord.teammanagement.commands.Abstrac
 import bootz.gaming.bootzbot.domain.discord.StaticTeamViewTeamCommand;
 import bootz.gaming.bootzbot.domain.discord.StaticViewService;
 import bootz.gaming.bootzbot.domain.sharedKernel.Executor;
-import bootz.gaming.bootzbot.application.discord.teammanagement.commands.ExecutorFactory;
+import bootz.gaming.bootzbot.application.discord.teammanagement.commands.id.ExecutorFactory;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
 import discord4j.core.object.command.ApplicationCommandInteractionOptionValue;
 import discord4j.core.object.command.ApplicationCommandOption;

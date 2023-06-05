@@ -1,7 +1,7 @@
 package bootz.gaming.bootzbot.application.discord.teammanagement.commands.teams;
 
 import bootz.gaming.bootzbot.application.discord.teammanagement.commands.AbstractRegistrableIdentifiedCommand;
-import bootz.gaming.bootzbot.application.discord.teammanagement.commands.ExecutorFactory;
+import bootz.gaming.bootzbot.application.discord.teammanagement.commands.id.ExecutorFactory;
 import bootz.gaming.bootzbot.domain.sharedKernel.Executor;
 import bootz.gaming.bootzbot.domain.teams.RenameTeamCommand;
 import bootz.gaming.bootzbot.domain.teams.TeamId;
