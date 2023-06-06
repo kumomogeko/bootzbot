@@ -6,6 +6,7 @@ import bootz.gaming.bootzbot.application.discord.teammanagement.commands.id.Exec
 import bootz.gaming.bootzbot.domain.teams.TeamId;
 import bootz.gaming.bootzbot.domain.teams.TeamReadTeamCommand;
 import bootz.gaming.bootzbot.domain.teams.TeamService;
+import bootz.gaming.bootzbot.domain.teams.teammitglied.Rolle;
 import bootz.gaming.bootzbot.domain.teams.teammitglied.Teammitglied;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
 import discord4j.core.object.command.ApplicationCommandInteractionOptionValue;
@@ -53,7 +54,7 @@ public class DCListTeamMembersCommand extends AbstractRegistrableIdentifiedComma
         for (var member : members) {
             memberFieldList.add(EmbedCreateFields.Field.of("Spieler", String.format("<@%s>", member.getDiscordAccount()), false));
             memberFieldList.add(EmbedCreateFields.Field.of("League", String.format("%s", member.getLeagueName()), true));
-            memberFieldList.add(EmbedCreateFields.Field.of("Captain", (member.isCaptain() ? "Ja" : "Nein"), true));
+            memberFieldList.add(EmbedCreateFields.Field.of("Rollen", String.join(", ", member.getRollen().stream().map(Rolle::toString).toList()), true));
         }
 
         return EmbedCreateSpec.builder().color(Color.of(0x181d29))

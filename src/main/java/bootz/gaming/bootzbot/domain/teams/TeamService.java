@@ -6,9 +6,7 @@ import bootz.gaming.bootzbot.domain.sharedKernel.TeamUpdatedEvent;
 import bootz.gaming.bootzbot.domain.teams.teamlinks.AddTeamLinkTeamCommand;
 import bootz.gaming.bootzbot.domain.teams.teamlinks.RemoveTeamLinkTeamCommand;
 import bootz.gaming.bootzbot.domain.teams.teamlinks.Teamlink;
-import bootz.gaming.bootzbot.domain.teams.teammitglied.AddUpdateTeammitgliedTeamCommand;
-import bootz.gaming.bootzbot.domain.teams.teammitglied.RemoveTeammitgliedTeamCommand;
-import bootz.gaming.bootzbot.domain.teams.teammitglied.Teammitglied;
+import bootz.gaming.bootzbot.domain.teams.teammitglied.*;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -65,6 +63,13 @@ public class TeamService {
         return this.executeTeamActionFromRepoAndSave(Team::addOrUpdateTeammitglied, command);
     }
 
+    public Mono<Void> addTeammitgliedRolle(AddTeammitgliedRollenTeamCommand command){
+        return this.executeTeamActionFromRepoAndSave(Team::addTeammitgliedRolle, command);
+    }
+
+    public  Mono<Void> removeTeammitgliedRolle(RemoveTeammitgliedRollenTeamCommand command){
+        return this.executeTeamActionFromRepoAndSave(Team::removeTeammitgliedRolle, command);
+    }
 
     public Mono<Void> removeTeammitglied(RemoveTeammitgliedTeamCommand command) {
         return this.executeTeamActionFromRepoAndSave(Team::removeTeammitglied, command);

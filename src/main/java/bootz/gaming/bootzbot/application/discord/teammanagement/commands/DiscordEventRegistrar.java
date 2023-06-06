@@ -7,11 +7,14 @@ import discord4j.discordjson.json.ApplicationCommandData;
 import discord4j.discordjson.json.ApplicationCommandRequest;
 import discord4j.rest.RestClient;
 import discord4j.rest.service.ApplicationService;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +22,8 @@ import java.util.Map;
 @Component
 @Profile("!test")
 public class DiscordEventRegistrar {
+
+    Logger log = LoggerFactory.getLogger(DiscordEventRegistrar.class);
     private final List<RegistrableCommand> commandRegistrarList;
     private final GatewayDiscordClient client;
     private final Map<String, RegistrableCommand> commandList;
@@ -39,14 +44,15 @@ public class DiscordEventRegistrar {
     }
 
     public void registerCommands(long appId, RestClient restClient) {
-        //var guildId = 1108533746627530802L;
-        ApplicationService applicationService = restClient.getApplicationService();
+        var commandRequestList = new ArrayList<ApplicationCommandRequest>();
         for (var command : commandRegistrarList) {
             ApplicationCommandRequest discordCommandRequest = command.getDiscordCommandRequest();
-            applicationService.createGlobalApplicationCommand(appId, discordCommandRequest).subscribe();
+            commandRequestList.add(discordCommandRequest);
+            //applicationService.createGlobalApplicationCommand(appId, discordCommandRequest).subscribe();
             commandList.put(discordCommandRequest.name(), command);
-            System.out.printf("Command registered: %s%n", discordCommandRequest.name());
+            log.info("Command registered: {}", discordCommandRequest.name());
         }
+        restClient.getApplicationService().bulkOverwriteGlobalApplicationCommand(appId, commandRequestList).subscribe();
     }
 
     public void removeOldCommands(long appId, RestClient restClient) {
@@ -55,7 +61,7 @@ public class DiscordEventRegistrar {
         applicationService.getGlobalApplicationCommands(appId)
                 .filter(applicationCommandData -> !commandList.containsKey(applicationCommandData.name()))
                 .doOnNext(applicationCommandData -> {
-                    System.out.println("Removing old command: " + applicationCommandData.name());
+                    log.info("Removing old command: " + applicationCommandData.name());
                 })
                 .map(ApplicationCommandData::id)
                 .flatMap(id -> applicationService.deleteGlobalApplicationCommand(appId, id.asLong()))
@@ -64,10 +70,14 @@ public class DiscordEventRegistrar {
 
     public void reactCommands() {
         client
-                .on(ChatInputInteractionEvent.class, event -> this.commandList.get(event.getCommandName())
-                        .getCommandHandler()
-                        .apply(event)
-                        .onErrorResume(throwable -> event.reply(String.format("Fehler: %s", throwable.getMessage()))))
+                .on(ChatInputInteractionEvent.class, event -> {
+                    log.info("received event for command: {}",event.getCommandName());
+                    return this.commandList.get(event.getCommandName())
+                            .getCommandHandler()
+                            .apply(event)
+                            .doOnSuccess(unused -> log.info("completed work for command: {}", event.getCommandName()))
+                            .onErrorResume(throwable -> event.reply(String.format("Fehler: %s", throwable.getMessage())));
+                })
                 .subscribe();
     }
 }

@@ -4,10 +4,9 @@ import bootz.gaming.bootzbot.domain.sharedKernel.Executor;
 import bootz.gaming.bootzbot.domain.teams.teamlinks.AddTeamLinkTeamCommand;
 import bootz.gaming.bootzbot.domain.teams.teamlinks.RemoveTeamLinkTeamCommand;
 import bootz.gaming.bootzbot.domain.teams.teamlinks.Teamlink;
-import bootz.gaming.bootzbot.domain.teams.teammitglied.AddUpdateTeammitgliedTeamCommand;
-import bootz.gaming.bootzbot.domain.teams.teammitglied.RemoveTeammitgliedTeamCommand;
-import bootz.gaming.bootzbot.domain.teams.teammitglied.Teammitglied;
+import bootz.gaming.bootzbot.domain.teams.teammitglied.*;
 import bootz.gaming.bootzbot.util.AggregateRoot;
+import discord4j.common.util.Snowflake;
 import reactor.util.annotation.Nullable;
 
 import java.net.URLEncoder;
@@ -91,6 +90,33 @@ public class Team {
             throw new RuntimeException("Ist kein Teammitglied!");
         }
         this.members.removeIf(teammitglied -> command.teammitglied().isEqual(teammitglied));
+    }
+
+    public void addTeammitgliedRolle(AddTeammitgliedRollenTeamCommand command){
+        if (notAllowedToExecuteTeamAction(command.runner())) {
+            throw new RuntimeException("Keine Berechtigung!");
+        }
+        Optional<Teammitglied> teammitgliedById = getTeammitgliedById(command.teammitglied());
+        if (teammitgliedById.isEmpty()) {
+            throw new RuntimeException("Ist kein Teammitglied!");
+        }
+        teammitgliedById.get().addRolle(command.rolle());
+    }
+
+    public void removeTeammitgliedRolle(RemoveTeammitgliedRollenTeamCommand command){
+        if (notAllowedToExecuteTeamAction(command.runner())) {
+            throw new RuntimeException("Keine Berechtigung!");
+        }
+        Optional<Teammitglied> teammitgliedById = getTeammitgliedById(command.teammitglied());
+        if (teammitgliedById.isEmpty()) {
+            throw new RuntimeException("Ist kein Teammitglied!");
+        }
+        teammitgliedById.get().removeRolle(command.rolle());
+    }
+
+
+    private Optional<Teammitglied> getTeammitgliedById(Snowflake dcaccount) {
+        return this.members.stream().filter(teammitglied -> teammitglied.getDiscordAccount().equals(dcaccount.asLong())).findFirst();
     }
 
     public void renameTeam(RenameTeamCommand command){

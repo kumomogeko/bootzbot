@@ -25,6 +25,17 @@ public class Teammitglied implements Executor {
         this.leagueName = leagueName;
     }
 
+    public void addRolle(Rolle rolle){
+        this.rollen.add(rolle);
+    }
+
+    public void removeRolle(Rolle rolle){
+        if(this.rollen.size() <= 1){
+            throw new RuntimeException("Spieler muss mindestens eine Rolle haben!");
+        }
+        this.rollen.remove(rolle);
+    }
+
     public String getLeagueName() {
         return leagueName;
     }
