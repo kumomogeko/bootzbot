@@ -1,10 +1,12 @@
 package bootz.gaming.bootzbot.domain.teams.teamlinks;
 
 import bootz.gaming.bootzbot.util.ValueObject;
+import org.springframework.data.cassandra.core.mapping.UserDefinedType;
 
 import java.util.Objects;
 
 @ValueObject
+@UserDefinedType("teamlink")
 public class Teamlink {
     private final String name;
     private final String link;

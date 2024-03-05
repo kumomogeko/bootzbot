@@ -1,6 +1,6 @@
 package bootz.gaming.bootzbot
 
-import bootz.gaming.bootzbot.infra.inbound.DiscordBotAccessProvision
+import bootz.gaming.bootzbot.infra.inbound.discord.DiscordBotAccessProvision
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile

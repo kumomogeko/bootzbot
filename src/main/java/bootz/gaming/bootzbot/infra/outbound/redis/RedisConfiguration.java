@@ -1,7 +1,7 @@
 package bootz.gaming.bootzbot.infra.outbound.redis;
 
-import bootz.gaming.bootzbot.infra.outbound.staticview.StaticViewDBO;
-import bootz.gaming.bootzbot.infra.outbound.team.dbo.TeamDBO;
+import bootz.gaming.bootzbot.infra.outbound.redis.staticview.StaticViewDBO;
+import bootz.gaming.bootzbot.infra.outbound.redis.dbo.TeamDBO;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;

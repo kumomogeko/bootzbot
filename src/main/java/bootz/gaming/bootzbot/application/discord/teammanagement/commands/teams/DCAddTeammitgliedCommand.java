@@ -1,8 +1,8 @@
 package bootz.gaming.bootzbot.application.discord.teammanagement.commands.teams;
 
 import bootz.gaming.bootzbot.application.discord.teammanagement.commands.AbstractRegistrableIdentifiedCommand;
-import bootz.gaming.bootzbot.domain.sharedKernel.Executor;
 import bootz.gaming.bootzbot.application.discord.teammanagement.commands.id.ExecutorFactory;
+import bootz.gaming.bootzbot.domain.sharedKernel.Executor;
 import bootz.gaming.bootzbot.domain.teams.TeamId;
 import bootz.gaming.bootzbot.domain.teams.TeamService;
 import bootz.gaming.bootzbot.domain.teams.teammitglied.AddUpdateTeammitgliedTeamCommand;
@@ -13,6 +13,8 @@ import discord4j.core.object.command.ApplicationCommandInteractionOptionValue;
 import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.discordjson.json.ApplicationCommandOptionData;
 import discord4j.discordjson.json.ApplicationCommandRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -20,6 +22,8 @@ import java.util.Set;
 
 @Component
 public class DCAddTeammitgliedCommand extends AbstractRegistrableIdentifiedCommand {
+
+    Logger log = LoggerFactory.getLogger(DCAddTeammitgliedCommand.class);
 
     private final TeamService teamService;
     private final String teamnameOption = "teamname";

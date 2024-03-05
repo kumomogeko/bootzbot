@@ -4,7 +4,7 @@ package bootz.gaming.bootzbot.domain.discord;
 import bootz.gaming.bootzbot.application.discord.teammanagement.TeamEmbedViewService;
 import bootz.gaming.bootzbot.domain.sharedKernel.TeamUpdatedEvent;
 import bootz.gaming.bootzbot.domain.teams.TeamService;
-import bootz.gaming.bootzbot.infra.inbound.DiscordBotAccessProvision;
+import bootz.gaming.bootzbot.infra.inbound.discord.DiscordBotAccessProvision;
 import discord4j.common.util.Snowflake;
 import discord4j.core.GatewayDiscordClient;
 import org.springframework.context.event.EventListener;
@@ -48,7 +48,7 @@ public class StaticViewService {
     }
 
     public Mono<Void> removeStaticTeamView(StaticTeamViewTeamCommand command){
-        return this.repository.delete(command.guild().asString()+command.channel().asString());
+        return this.repository.delete(command.guild().asLong(),command.channel().asLong());
     }
 
     @EventListener

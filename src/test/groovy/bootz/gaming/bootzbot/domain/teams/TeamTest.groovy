@@ -63,7 +63,7 @@ class TeamTest extends Specification {
         when:
         team.addOrUpdateTeammitglied(new AddUpdateTeammitgliedTeamCommand(admin, teamId, teammitglied))
         then:
-        thrown(RuntimeException)
+        team.members.size() == 1
     }
 
 

@@ -1,4 +1,4 @@
-package bootz.gaming.bootzbot.infra.outbound.staticview;
+package bootz.gaming.bootzbot.infra.outbound.redis.staticview;
 
 import bootz.gaming.bootzbot.domain.discord.StaticTeamView;
 import bootz.gaming.bootzbot.domain.discord.StaticViewRepository;
@@ -25,7 +25,6 @@ public class RedisStaticViewRepoImpl implements StaticViewRepository {
         this.redisOperations = redisOperations;
     }
 
-    @Override
     public Mono<StaticTeamView> getById(String id) {
         log.info("Entry getById");
         return redisOperations.opsForHash().get(KEY, id)
@@ -45,9 +44,9 @@ public class RedisStaticViewRepoImpl implements StaticViewRepository {
     }
 
     @Override
-    public Mono<Void> delete(String id) {
+    public Mono<Void> delete(Long guild, Long channel) {
         log.info("Entry delete");
-        return redisOperations.opsForHash().remove(KEY, id)
+        return redisOperations.opsForHash().remove(KEY, guild.toString()+channel.toString())
                 .doOnSuccess(u -> log.info("Exit delete"))
                 .then();
     }

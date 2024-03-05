@@ -1,25 +1,36 @@
-package bootz.gaming.bootzbot.infra.outbound.staticview;
+package bootz.gaming.bootzbot.infra.outbound.cassandra.staticview;
 
 import bootz.gaming.bootzbot.domain.discord.StaticTeamView;
 import discord4j.common.util.Snowflake;
+import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
+import org.springframework.data.cassandra.core.mapping.Column;
+import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
+import org.springframework.data.cassandra.core.mapping.Table;
 
-public class StaticViewDBO {
+@Table
+public class CStaticView {
 
+
+    @PrimaryKeyColumn(name = "id", ordinal = 1, type = PrimaryKeyType.CLUSTERED)
     private String id;
+    @PrimaryKeyColumn(name = "guildId",
+    ordinal = 0,
+    type = PrimaryKeyType.PARTITIONED)
     private long guildId;
+    @Column
     private long channelId;
 
-    public StaticViewDBO() {
+    public CStaticView() {
     }
 
-    public StaticViewDBO(String id, long guildId, long channelId) {
+    public CStaticView(String id, long guildId, long channelId) {
         this.id = id;
         this.guildId = guildId;
         this.channelId = channelId;
     }
 
-    public static StaticViewDBO fromStaticTeamView(StaticTeamView view) {
-        return new StaticViewDBO(view.id(), view.guild().asLong(), view.channel().asLong());
+    public static CStaticView fromStaticTeamView(StaticTeamView view) {
+        return new CStaticView(view.id(), view.guild().asLong(), view.channel().asLong());
     }
 
     public StaticTeamView toStaticTeamView() {

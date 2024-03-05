@@ -1,4 +1,4 @@
-package bootz.gaming.bootzbot.infra.outbound.staticview;
+package bootz.gaming.bootzbot.infra.outbound.terrible;
 
 import bootz.gaming.bootzbot.domain.discord.StaticTeamView;
 import bootz.gaming.bootzbot.domain.discord.StaticViewRepository;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-@Profile("!redis")
+@Profile({"inmem"})
 public class TerribleStaticViewRepoImpl implements StaticViewRepository {
 
     private final HashMap<String, StaticTeamView> repo;
@@ -21,7 +21,6 @@ public class TerribleStaticViewRepoImpl implements StaticViewRepository {
         this.repo = new HashMap<>();
     }
 
-    @Override
     public Mono<StaticTeamView> getById(String id) {
         return Mono.justOrEmpty(repo.get(id));
     }
@@ -33,8 +32,8 @@ public class TerribleStaticViewRepoImpl implements StaticViewRepository {
     }
 
     @Override
-    public Mono<Void> delete(String id) {
-        this.repo.remove(id);
+    public Mono<Void> delete(Long guild, Long channel) {
+        this.repo.remove(guild.toString()+channel.toString());
         return Mono.empty().then();
     }
 

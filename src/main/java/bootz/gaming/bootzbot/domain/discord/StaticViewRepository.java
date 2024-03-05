@@ -6,11 +6,10 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 public interface StaticViewRepository {
-    Mono<StaticTeamView> getById(String id);
 
     Mono<Void> save(StaticTeamView view);
 
-    Mono<Void> delete(String id);
+    Mono<Void> delete(Long guild, Long channel);
 
     Mono<List<StaticTeamView>> getByGuild(Snowflake guildId);
 }

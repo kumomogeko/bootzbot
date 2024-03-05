@@ -1,4 +1,4 @@
-package bootz.gaming.bootzbot.infra.inbound;
+package bootz.gaming.bootzbot.infra.inbound.discord;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

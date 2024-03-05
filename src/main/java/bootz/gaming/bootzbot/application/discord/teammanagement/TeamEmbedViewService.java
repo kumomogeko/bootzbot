@@ -46,19 +46,14 @@ public class TeamEmbedViewService {
         return embedList;
     }
 
-    //Fixme Please clean me up!
     public Mono<Void> postEventTeamSpec(ChatInputInteractionEvent event, List<EmbedCreateSpec> specs){
-        if(specs.size()==0){
+        if(specs.isEmpty()){
             return Mono.empty();
         }
-        var replySpec = InteractionApplicationCommandCallbackSpec.builder()
-                .addEmbed(specs.get(0)).build();
 
-        var chainOfResponses = event.reply(replySpec);
-        if(specs.size()==1){
-            return chainOfResponses;
-        }
-        for(var spec: specs.subList(1,specs.size())){
+        var chainOfResponses = event.deferReply().then();
+
+        for(var spec: specs){
             var tempreplySpec = InteractionFollowupCreateSpec.builder()
                     .addEmbed(spec).build();
             chainOfResponses = chainOfResponses.then(event.createFollowup(tempreplySpec).then());

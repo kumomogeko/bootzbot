@@ -1,10 +1,8 @@
-package bootz.gaming.bootzbot.infra.outbound.team;
+package bootz.gaming.bootzbot.infra.outbound.redis.dbo;
 
 import bootz.gaming.bootzbot.domain.teams.Team;
 import bootz.gaming.bootzbot.domain.teams.TeamId;
 import bootz.gaming.bootzbot.domain.teams.TeamRepository;
-import bootz.gaming.bootzbot.infra.outbound.team.dbo.TeamDB;
-import bootz.gaming.bootzbot.infra.outbound.team.dbo.TeamDBO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;

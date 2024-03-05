@@ -1,4 +1,4 @@
-package bootz.gaming.bootzbot.infra.outbound.team;
+package bootz.gaming.bootzbot.infra.outbound.terrible;
 
 import bootz.gaming.bootzbot.domain.teams.Team;
 import bootz.gaming.bootzbot.domain.teams.TeamId;
@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @Component
-@Profile("!redis")
+@Profile({"inmem"})
 public class TerribleTeamRepoImpl implements TeamRepository {
 
     private final HashMap<TeamId, Team> repo;

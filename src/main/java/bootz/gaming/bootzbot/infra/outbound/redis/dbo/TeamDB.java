@@ -1,4 +1,4 @@
-package bootz.gaming.bootzbot.infra.outbound.team.dbo;
+package bootz.gaming.bootzbot.infra.outbound.redis.dbo;
 
 import bootz.gaming.bootzbot.domain.teams.Team;
 import bootz.gaming.bootzbot.domain.teams.TeammitgliedDB;

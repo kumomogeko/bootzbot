@@ -48,9 +48,11 @@ public class TeamService {
                 .doOnSuccess(unused -> this.publisher.publishEvent(new TeamUpdatedEvent(command.teamId())));
     }
 
-    public Mono<Void> renameTeam(RenameTeamCommand command){
+    public Mono<Void> renameTeam(RenameTeamCommand command) {
         return this.repository.getTeamByTeamId(new TeamId(command.teamId().getGuild(), command.newName()))
-                .map(team -> {throw new RuntimeException("Teamname ist nicht frei!");})
+                .map(team -> {
+                    throw new RuntimeException("Teamname ist nicht frei!");
+                })
                 .then()
                 .then(this.executeTeamActionFromRepoAndSave(Team::renameTeam, command).then(this.repository.delete(command.teamId())));
     }
@@ -63,11 +65,11 @@ public class TeamService {
         return this.executeTeamActionFromRepoAndSave(Team::addOrUpdateTeammitglied, command);
     }
 
-    public Mono<Void> addTeammitgliedRolle(AddTeammitgliedRollenTeamCommand command){
+    public Mono<Void> addTeammitgliedRolle(AddTeammitgliedRollenTeamCommand command) {
         return this.executeTeamActionFromRepoAndSave(Team::addTeammitgliedRolle, command);
     }
 
-    public  Mono<Void> removeTeammitgliedRolle(RemoveTeammitgliedRollenTeamCommand command){
+    public Mono<Void> removeTeammitgliedRolle(RemoveTeammitgliedRollenTeamCommand command) {
         return this.executeTeamActionFromRepoAndSave(Team::removeTeammitgliedRolle, command);
     }
 
