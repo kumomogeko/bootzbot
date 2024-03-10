@@ -76,6 +76,6 @@ public class DCAddTeammitgliedCommand extends AbstractRegistrableIdentifiedComma
         var discord = getOption(event, spielerdiscordOption, ApplicationCommandInteractionOptionValue::asSnowflake);
         var roles = getNonRequiredOption(event, istCapOption, ApplicationCommandInteractionOptionValue::asBoolean).orElse(false) ? Set.of(Rolle.CAPTAIN, Rolle.MITGLIED) : Set.of(Rolle.MITGLIED);
         var command = new AddUpdateTeammitgliedTeamCommand(runner, new TeamId(guildId.asLong(), teamName), new Teammitglied(discord.asLong(), roles, leagueName));
-        return teamService.addOrUpdateTeammitglied(command).then(event.reply("Mitglied hinzugefügt"));
+        return teamService.addOrUpdateTeammitglied(command).then(event.createFollowup("Mitglied hinzugefügt").then());
     }
 }

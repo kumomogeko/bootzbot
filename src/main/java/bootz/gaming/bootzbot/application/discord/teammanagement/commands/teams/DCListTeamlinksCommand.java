@@ -13,6 +13,7 @@ import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.core.spec.InteractionApplicationCommandCallbackSpec;
+import discord4j.core.spec.InteractionFollowupCreateSpec;
 import discord4j.discordjson.json.ApplicationCommandOptionData;
 import discord4j.discordjson.json.ApplicationCommandRequest;
 import discord4j.rest.util.Color;
@@ -53,9 +54,9 @@ public class DCListTeamlinksCommand extends AbstractRegistrableIdentifiedCommand
         var command = new TeamReadTeamCommand(runner, new TeamId(guildId.asLong(), teamname));
 
         return teamService.getLinks(command).flatMap(links -> {
-            var replySpec = InteractionApplicationCommandCallbackSpec.builder()
+            var replySpec = InteractionFollowupCreateSpec.builder()
                     .addEmbed(createLinkSpec(teamname, links)).build();
-            return event.reply(replySpec);
+            return event.createFollowup(replySpec).then();
         });
     }
 

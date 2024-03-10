@@ -51,7 +51,7 @@ public class TeamEmbedViewService {
             return Mono.empty();
         }
 
-        var chainOfResponses = event.deferReply().then();
+        Mono<Void> chainOfResponses = Mono.empty();
 
         for(var spec: specs){
             var tempreplySpec = InteractionFollowupCreateSpec.builder()

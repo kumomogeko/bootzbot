@@ -54,6 +54,6 @@ public class DCRemoveTeamlinkCommand extends AbstractRegistrableIdentifiedComman
         var linkid = getOption(event, linkidOption, ApplicationCommandInteractionOptionValue::asString);
 
         var command = new RemoveTeamLinkTeamCommand(runner, new TeamId(guildId.asLong(), teamname), linkid);
-        return teamService.removeTeamlink(command).then(event.reply("Link entfernt"));
+        return teamService.removeTeamlink(command).then(event.createFollowup("Link entfernt").then());
     }
 }

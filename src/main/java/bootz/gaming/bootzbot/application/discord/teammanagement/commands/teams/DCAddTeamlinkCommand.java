@@ -79,6 +79,6 @@ public class DCAddTeamlinkCommand extends AbstractRegistrableIdentifiedCommand {
         var isOpGG = getNonRequiredOption(event, this.istopggOption, ApplicationCommandInteractionOptionValue::asBoolean).orElse(false);
 
         var command = new AddTeamLinkTeamCommand(executor, new TeamId(guildId.asLong(), teamname), linkid, new Teamlink(linkdesc, link), isOpGG);
-        return teamService.addTeamlink(command).then(event.reply("Link zugefügt"));
+        return teamService.addTeamlink(command).then(event.createFollowup("Link zugefügt").then());
     }
 }

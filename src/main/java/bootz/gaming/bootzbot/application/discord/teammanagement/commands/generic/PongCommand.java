@@ -28,6 +28,6 @@ public class PongCommand implements RegistrableCommand {
 
     @Override
     public Function<ChatInputInteractionEvent, Mono<Void>> getCommandHandler() {
-        return event -> event.reply("Pong!");
+        return event -> event.createFollowup("Pong!").then();
     }
 }

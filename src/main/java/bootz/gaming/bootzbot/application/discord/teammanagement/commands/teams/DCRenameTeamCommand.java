@@ -51,6 +51,6 @@ public class DCRenameTeamCommand extends AbstractRegistrableIdentifiedCommand {
         var wantedTeamname = getOption(event, "wantedname", ApplicationCommandInteractionOptionValue::asString);
 
         return this.teamService.renameTeam(new RenameTeamCommand(runner, new TeamId(guildId.asLong(),currentTeamname),wantedTeamname))
-                .then(event.reply("Team umbenannt!"));
+                .then(event.createFollowup("Team umbenannt!").then());
     }
 }

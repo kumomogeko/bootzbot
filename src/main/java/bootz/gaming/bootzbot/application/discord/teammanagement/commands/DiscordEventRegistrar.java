@@ -79,11 +79,12 @@ public class DiscordEventRegistrar {
         client
                 .on(ChatInputInteractionEvent.class, event -> {
                     log.info("received event for command: {}", event.getCommandName());
-                    return this.commandList.get(event.getCommandName())
+
+                    return event.deferReply().then(this.commandList.get(event.getCommandName())
                             .getCommandHandler()
                             .apply(event)
                             .doOnSuccess(unused -> log.info("completed work for command: {}", event.getCommandName()))
-                            .onErrorResume(throwable -> event.reply(String.format("Fehler: %s", throwable.getMessage())));
+                            .onErrorResume(throwable -> event.createFollowup(String.format("Fehler: %s", throwable.getMessage())).then()));
                 })
                 .subscribe();
     }

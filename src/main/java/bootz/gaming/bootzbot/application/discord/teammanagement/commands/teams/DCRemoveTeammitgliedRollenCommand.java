@@ -71,6 +71,6 @@ public class DCRemoveTeammitgliedRollenCommand extends AbstractRegistrableIdenti
         var discordaccount = getOption(event, spielerdiscordOption, ApplicationCommandInteractionOptionValue::asSnowflake);
         var rolle = getOption(event, rollenOption, ApplicationCommandInteractionOptionValue::asString);
         return this.teamService.removeTeammitgliedRolle(new RemoveTeammitgliedRollenTeamCommand(runner, new TeamId(guildId.asLong(), teamname), discordaccount, Rolle.valueOf(rolle)))
-                .then(event.reply("Rolle entfernt"));
+                .then(event.createFollowup("Rolle entfernt").then());
     }
 }

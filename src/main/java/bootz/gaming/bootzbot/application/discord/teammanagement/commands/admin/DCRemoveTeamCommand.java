@@ -44,6 +44,6 @@ public class DCRemoveTeamCommand extends AbstractRegistrableAdminCommand {
         var guildId = event.getInteraction().getGuildId().orElseThrow();
         var teamName = this.getOption(event, "name", ApplicationCommandInteractionOptionValue::asString);
         var command = new RemoveTeamCommand(runner, new TeamId(guildId.asLong(), teamName));
-        return teamService.removeTeam(command).then(event.reply(String.format("Team entfernt: %s", teamName)));
+        return teamService.removeTeam(command).then(event.createFollowup(String.format("Team entfernt: %s", teamName)).then());
     }
 }

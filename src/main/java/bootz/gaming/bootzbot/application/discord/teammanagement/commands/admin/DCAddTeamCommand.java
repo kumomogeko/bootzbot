@@ -43,6 +43,6 @@ public class DCAddTeamCommand extends AbstractRegistrableAdminCommand {
         var guildId = event.getInteraction().getGuildId().orElseThrow();
         var teamName = this.getOption(event, "name", ApplicationCommandInteractionOptionValue::asString);
         var command = new AddTeamCommand(executor, new TeamId(guildId.asLong(), teamName));
-        return teamService.addTeam(command).then(event.reply(String.format("Team hinzugefügt: %s", teamName)));
+        return teamService.addTeam(command).then(event.createFollowup(String.format("Team hinzugefügt: %s", teamName))).then();
     }
 }

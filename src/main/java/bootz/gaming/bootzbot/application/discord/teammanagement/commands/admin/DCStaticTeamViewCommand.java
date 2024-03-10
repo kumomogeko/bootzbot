@@ -43,6 +43,6 @@ public class DCStaticTeamViewCommand extends AbstractRegistrableAdminCommand {
         var channel = event.getInteraction().getChannelId();
         var onoff = getNonRequiredOption(event, "switch", ApplicationCommandInteractionOptionValue::asBoolean).orElse(true);
         return this.staticViewService.staticCommandHandler(new StaticTeamViewTeamCommand(runner, guildId, channel, onoff))
-                .then(event.reply("Hat funktioniert!"));
+                .then(event.createFollowup("Hat funktioniert!").then());
     }
 }

@@ -48,6 +48,6 @@ public class DCGetOpGGCommand extends AbstractRegistrableIdentifiedCommand {
                 .map(ApplicationCommandInteractionOptionValue::asString)
                 .orElseThrow();
         return teamService.getOpgg(new TeamReadTeamCommand(runner, new TeamId(guildId.asLong(), teamName)))
-                .flatMap(event::reply);
+                .flatMap(event::createFollowup).then();
     }
 }

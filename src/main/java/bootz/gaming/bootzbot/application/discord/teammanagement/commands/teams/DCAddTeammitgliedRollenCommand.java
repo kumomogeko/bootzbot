@@ -70,6 +70,6 @@ public class DCAddTeammitgliedRollenCommand extends AbstractRegistrableIdentifie
         var discordaccount = getOption(event, spielerdiscordOption, ApplicationCommandInteractionOptionValue::asSnowflake);
         var rolle = getOption(event, rollenOption, ApplicationCommandInteractionOptionValue::asString);
         return this.teamService.addTeammitgliedRolle(new AddTeammitgliedRollenTeamCommand(runner, new TeamId(guildId.asLong(), teamname), discordaccount, Rolle.valueOf(rolle)))
-                .then(event.reply("Rolle zugefügt"));
+                .then(event.createFollowup("Rolle zugefügt").then());
     }
 }
